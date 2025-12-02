@@ -354,4 +354,21 @@ function generateTimeSlots(startTime, endTime, interval, pauseStart, pauseEnd) {
   return slots;
 }
 
+// @desc    Ottieni servizi unici da tutti gli appuntamenti
+// @route   GET /api/appointments/services/unique
+// @access  Public
+exports.getUniqueServices = async (req, res) => {
+  try {
+    const services = await Appointment.distinct('servizio');
+    // Filter out empty strings and sort
+    const uniqueServices = services
+      .filter(s => s && s.trim().length > 0)
+      .sort();
+    res.json(uniqueServices);
+  } catch (error) {
+    console.error('Error getting unique services:', error);
+    res.status(500).json({ message: 'Errore durante il recupero dei servizi', error: error.message });
+  }
+};
+
 module.exports = exports;

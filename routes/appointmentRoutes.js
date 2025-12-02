@@ -6,7 +6,8 @@ const {
   getAppointmentById,
   updateAppointment,
   deleteAppointment,
-  getAvailableSlots
+  getAvailableSlots,
+  getUniqueServices
 } = require('../controllers/appointmentController');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -15,6 +16,7 @@ router.route('/')
   .get(protect, getAppointments);
 
 router.get('/available-slots', getAvailableSlots);
+router.get('/services/unique', getUniqueServices);
 
 router.route('/:id')
   .get(protect, getAppointmentById)
