@@ -1,8 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const { protect } = require('../middleware/auth');
+const userController = require('../controllers/userController');
 
-// GET tutti gli utenti
+// Rotte protette per il profilo utente
+router.get('/profile', protect, userController.getProfile);
+router.put('/profile', protect, userController.updateProfile);
+router.put('/password', protect, userController.changePassword);
+router.post('/profile/photo', protect, userController.uploadProfilePhoto);
+router.delete('/account', protect, userController.deleteAccount);
+router.get('/stats', protect, userController.getUserStats);
+
+// GET tutti gli utenti (admin)
 router.get('/', async (req, res) => {
   try {
     const users = await User.find()

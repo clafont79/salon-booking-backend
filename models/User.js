@@ -36,7 +36,41 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  // Campi profilo personale
+  fotoProfilo: {
+    type: String,
+    default: null
+  },
+  bio: {
+    type: String,
+    maxlength: 500,
+    default: ''
+  },
+  dataNascita: {
+    type: Date,
+    default: null
+  },
+  indirizzo: {
+    via: { type: String, default: '' },
+    citta: { type: String, default: '' },
+    cap: { type: String, default: '' },
+    provincia: { type: String, default: '' }
+  },
+  preferenze: {
+    notificheEmail: { type: Boolean, default: true },
+    notificheSMS: { type: Boolean, default: false },
+    linguaPreferita: { type: String, default: 'it' }
+  },
+  socialLinks: {
+    facebook: { type: String, default: '' },
+    instagram: { type: String, default: '' },
+    twitter: { type: String, default: '' }
+  },
   createdAt: {
+    type: Date,
+    default: Date.now
+  },
+  updatedAt: {
     type: Date,
     default: Date.now
   }

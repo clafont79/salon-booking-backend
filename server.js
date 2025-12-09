@@ -1,7 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const cron = require('node-cron');
 const connectDB = require('./config/database');
+const notificationController = require('./controllers/notificationController');
 
 // Importa routes
 const authRoutes = require('./routes/authRoutes');
@@ -9,6 +11,7 @@ const appointmentRoutes = require('./routes/appointmentRoutes');
 const operatorRoutes = require('./routes/operatorRoutes');
 const configRoutes = require('./routes/configRoutes');
 const userRoutes = require('./routes/userRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -33,6 +36,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/operators', operatorRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Route di test
 app.get('/', (req, res) => {
@@ -61,6 +65,13 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`  - Locale: http://localhost:${PORT}`);
   console.log(`  - Rete locale: http://192.168.1.6:${PORT}`);
   console.log(`  - Mobile: Usa http://192.168.1.6:${PORT}/api`);
+  
+  // Avvia cron job per notifiche ogni 15 minuti
+  cron.schedule('*/15 * * * *', () => {
+    console.log('Esecuzione controllo appuntamenti imminenti...');
+    notificationController.checkUpcomingAppointments();
+  });
+  console.log('Cron job notifiche attivato (ogni 15 minuti)');
 });
 
 server.on('error', (error) => {
