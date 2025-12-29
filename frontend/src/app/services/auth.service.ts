@@ -49,6 +49,15 @@ export class AuthService {
     );
   }
 
+  registerWithGoogle(googleUser: any): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/google-register`, googleUser).pipe(
+      tap(user => {
+        localStorage.setItem('currentUser', JSON.stringify(user));
+        this.currentUserSubject.next(user);
+      })
+    );
+  }
+
   login(data: LoginRequest): Observable<AuthResponse> {
     console.log('Login attempt with URL:', `${this.apiUrl}/login`);
     console.log('Login data:', data);

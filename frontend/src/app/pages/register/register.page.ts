@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController } from '@ionic/angular';
 import { AuthService } from '../../services/auth.service';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 
 @Component({
   selector: 'app-register',
@@ -67,5 +68,54 @@ export class RegisterPage implements OnInit {
 
   goToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  async signUpWithGoogle() {
+    const loading = await this.loadingController.create({
+      message: 'Connessione con Google...'
+    });
+    await loading.present();
+
+    try {
+      const result = await GoogleAuth.signIn();
+      
+      if (result && result.authentication) {
+        // Invia i dati al backend per creare l'utente
+        const googleUser = {
+          email: result.email,
+          nome: result.givenName || result.name?.split(' ')[0] || '',
+          cognome: result.familyName || result.name?.split(' ')[1] || '',
+          telefono: '',
+          googleId: result.id,
+          photoUrl: result.imageUrl
+        };
+
+        this.authService.registerWithGoogle(googleUser).subscribe({
+          next: () => {
+            loading.dismiss();
+            this.router.navigate(['/home']);
+          },
+          error: async (error: any) => {
+            loading.dismiss();
+            const alert = await this.alertController.create({
+              header: 'Errore',
+              message: error.error?.message || 'Errore durante la registrazione con Google',
+              buttons: ['OK']
+            });
+            await alert.present();
+          }
+        });
+      } else {
+        loading.dismiss();
+      }
+    } catch (error) {
+      loading.dismiss();
+      const alert = await this.alertController.create({
+        header: 'Errore',
+        message: 'Impossibile connettersi con Google',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
   }
 }

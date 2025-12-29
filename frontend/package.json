@@ -24,6 +24,7 @@
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4",
     "@capacitor/geolocation": "^7.1.7",
+    "@codetrix-studio/capacitor-google-auth": "^3.4.0-rc.4",
     "@ionic/angular": "^7.5.0",
     "chrono-node": "^2.9.0",
     "cordova-plugin-speechrecognition": "^1.2.0",

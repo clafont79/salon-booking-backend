@@ -47,6 +47,54 @@ exports.register = async (req, res) => {
   }
 };
 
+// @desc    Registra utente con Google
+// @route   POST /api/auth/google-register
+// @access  Public
+exports.googleRegister = async (req, res) => {
+  try {
+    const { email, nome, cognome, telefono, googleId, photoUrl } = req.body;
+
+    // Verifica se utente esiste già
+    let user = await User.findOne({ email });
+    
+    if (user) {
+      // Se l'utente esiste, aggiorna il googleId se non presente
+      if (!user.googleId) {
+        user.googleId = googleId;
+        if (photoUrl) user.photoUrl = photoUrl;
+        await user.save();
+      }
+    } else {
+      // Crea nuovo utente
+      user = await User.create({
+        nome,
+        cognome,
+        email,
+        telefono: telefono || '',
+        googleId,
+        photoUrl,
+        ruolo: 'cliente',
+        // Password random per utenti Google (non verrà mai usata)
+        password: Math.random().toString(36).slice(-16) + Math.random().toString(36).slice(-16)
+      });
+    }
+
+    res.status(200).json({
+      _id: user._id,
+      nome: user.nome,
+      cognome: user.cognome,
+      email: user.email,
+      telefono: user.telefono,
+      ruolo: user.ruolo,
+      photoUrl: user.photoUrl,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    console.error('Google register error:', error);
+    res.status(500).json({ message: 'Errore durante la registrazione con Google', error: error.message });
+  }
+};
+
 // @desc    Login utente
 // @route   POST /api/auth/login
 // @access  Public

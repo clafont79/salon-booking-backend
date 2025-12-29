@@ -14,6 +14,11 @@
   "plugins": {
     "SplashScreen": {
       "launchShowDuration": 0
+    },
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "serverClientId": "655999197488-9tb9k7ang1pviptn74ueut1hg4be8tsg.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
     }
   }
 }

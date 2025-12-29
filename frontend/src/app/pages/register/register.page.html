@@ -53,6 +53,15 @@
         Registrati
       </ion-button>
 
+      <div class="divider ion-margin-vertical">
+        <span>oppure</span>
+      </div>
+
+      <ion-button expand="block" fill="outline" (click)="signUpWithGoogle()" class="google-button">
+        <ion-icon slot="start" name="logo-google"></ion-icon>
+        Registrati con Google
+      </ion-button>
+
       <ion-button expand="block" fill="outline" (click)="goToLogin()" class="ion-margin-top">
         Hai già un account? Accedi
       </ion-button>

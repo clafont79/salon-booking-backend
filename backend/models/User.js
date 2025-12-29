@@ -66,6 +66,14 @@ const userSchema = new mongoose.Schema({
     instagram: { type: String, default: '' },
     twitter: { type: String, default: '' }
   },
+  googleId: {
+    type: String,
+    default: null
+  },
+  photoUrl: {
+    type: String,
+    default: null
+  },
   createdAt: {
     type: Date,
     default: Date.now
