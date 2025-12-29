@@ -23,6 +23,7 @@
     "@capacitor/camera": "^7.0.2",
     "@capacitor/cli": "^7.4.4",
     "@capacitor/core": "^7.4.4",
+    "@capacitor/geolocation": "^7.1.7",
     "@ionic/angular": "^7.5.0",
     "chrono-node": "^2.9.0",
     "cordova-plugin-speechrecognition": "^1.2.0",
