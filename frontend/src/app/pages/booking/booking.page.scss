@@ -1,0 +1,189 @@
+.modern-header {
+  ion-toolbar.gradient-toolbar {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --color: white;
+    --min-height: 56px;
+    padding-top: env(safe-area-inset-top, 0);
+
+    ion-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    ion-buttons {
+      ion-menu-button,
+      ion-button {
+        --color: white;
+        
+        ion-icon {
+          font-size: 28px;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+.modern-booking-content {
+  --background: linear-gradient(180deg, #f8f9fe 0%, #ffffff 100%);
+}
+
+.booking-form-card {
+  margin: 20px 16px;
+  border-radius: 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  
+  ion-card-content {
+    padding: 28px;
+  }
+}
+
+.form-group {
+  margin-bottom: 28px;
+  
+  .input-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a202c;
+    
+    .label-icon {
+      font-size: 22px;
+      color: #667eea;
+    }
+  }
+  
+  .modern-item {
+    --background: #f7fafc;
+    --border-radius: 18px;
+    --padding-start: 18px;
+    --padding-end: 18px;
+    --inner-padding-end: 10px;
+    --min-height: 56px;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &.item-has-focus {
+      --background: white;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.18);
+      transform: translateY(-1px);
+    }
+    
+    ion-input, ion-select {
+      --padding-start: 0;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    
+    .chevron-icon {
+      color: #667eea;
+      font-size: 20px;
+    }
+  }
+  
+  .textarea-item {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    
+    ion-textarea {
+      --padding-start: 0;
+      --padding-top: 0;
+      font-size: 15px;
+    }
+  }
+}
+
+.loading-section, .no-slots-section {
+  text-align: center;
+  padding: 32px 20px;
+  background: #f7fafc;
+  border-radius: 16px;
+  margin-bottom: 24px;
+
+  ion-spinner, ion-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  
+  p {
+    font-size: 14px;
+    color: #718096;
+    margin: 0;
+  }
+}
+
+.submit-button {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --box-shadow: 0 8px 28px rgba(102, 126, 234, 0.4);
+  --border-radius: 18px;
+  height: 60px;
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: none;
+  margin-top: 36px;
+  letter-spacing: 0.5px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &:active {
+    transform: translateY(3px);
+    --box-shadow: 0 4px 14px rgba(102, 126, 234, 0.3);
+  }
+}
+
+// Modern Footer
+.modern-footer {
+  ion-toolbar.bottom-navigation {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --border-color: transparent;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --min-height: 5px;
+    box-shadow: 0 -2px 8px rgba(102, 126, 234, 0.3);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    
+    .nav-items {
+      display: none;
+    }
+  }
+}
+
+.modern-date-modal {
+  --width: 90%;
+  --max-width: 400px;
+  --height: auto;
+  --border-radius: 24px;
+  
+  .modal-content {
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    
+    h2 {
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+    
+    ion-button {
+      --color: white;
+    }
+  }
+  
+  ion-datetime {
+    --background: white;
+  }
+}
+

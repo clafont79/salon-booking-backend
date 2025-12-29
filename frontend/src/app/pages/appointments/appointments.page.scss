@@ -1,0 +1,244 @@
+.modern-header {
+  ion-toolbar.gradient-toolbar {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --color: white;
+    --min-height: 56px;
+    padding-top: env(safe-area-inset-top, 0);
+
+    ion-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    ion-buttons {
+      ion-menu-button,
+      ion-button {
+        --color: white;
+        
+        ion-icon {
+          font-size: 28px;
+          color: white;
+        }
+      }
+    }
+  }
+  
+  .segment-toolbar {
+    --background: white;
+    --min-height: 32px;
+    padding: 4px 12px;
+  }
+  
+  .modern-segment {
+    --background: #f0f0f5;
+    border-radius: 8px;
+    padding: 2px;
+    
+    ion-segment-button {
+      --indicator-color: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --color: #718096;
+      --color-checked: white;
+      min-height: 26px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: none;
+      
+      ion-label {
+        margin: 0;
+        padding: 4px 8px;
+      }
+    }
+  }
+}
+
+.modern-appointments-content {
+  --background: linear-gradient(180deg, #f8f9fe 0%, #ffffff 100%);
+}
+
+.loading-section {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.modern-appointment-card {
+  margin: 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+  
+  .card-status-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    
+    &.status-confirmed {
+      background: linear-gradient(180deg, #48bb78 0%, #38a169 100%);
+    }
+    
+    &.status-completed {
+      background: linear-gradient(180deg, #4299e1 0%, #3182ce 100%);
+    }
+    
+    &.status-cancelled {
+      background: linear-gradient(180deg, #f56565 0%, #e53e3e 100%);
+    }
+    
+    &.status-pending {
+      background: linear-gradient(180deg, #ed8936 0%, #dd6b20 100%);
+    }
+  }
+  
+  ion-card-content {
+    padding: 20px 20px 20px 26px;
+  }
+  
+  .appointment-main {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    
+    .appointment-icon-wrapper {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      
+      .service-icon {
+        font-size: 28px;
+        color: white;
+      }
+    }
+    
+    .appointment-details-section {
+      flex: 1;
+      min-width: 0;
+      
+      .service-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #2d3748;
+        margin: 0 0 12px 0;
+      }
+      
+      .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #4a5568;
+        
+        .detail-icon {
+          font-size: 16px;
+          color: #a0aec0;
+          flex-shrink: 0;
+        }
+        
+        .specializations {
+          font-style: italic;
+          color: #718096;
+        }
+        
+        .note-text {
+          font-style: italic;
+          color: #718096;
+          font-size: 13px;
+        }
+        
+        .price-text {
+          font-weight: 700;
+          color: #48bb78;
+        }
+      }
+    }
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    
+    .status-badge-modern {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .cancel-button {
+      --border-width: 2px;
+      --border-radius: 12px;
+      height: 36px;
+      font-weight: 600;
+      text-transform: none;
+      
+      ion-icon {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+.empty-state-modern {
+  text-align: center;
+  padding: 80px 20px;
+  
+  .empty-illustration {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #e6f2ff 0%, #f0e6ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    ion-icon {
+      font-size: 72px;
+      color: #a0aec0;
+    }
+  }
+  
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 8px 0;
+  }
+  
+  p {
+    font-size: 15px;
+    color: #718096;
+    margin: 0;
+  }
+}
+
+// Modern Footer
+.modern-footer {
+  ion-toolbar.bottom-navigation {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --border-color: transparent;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --min-height: 5px;
+    box-shadow: 0 -2px 8px rgba(102, 126, 234, 0.3);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    
+    .nav-items {
+      display: none;
+    }
+  }
+}

@@ -1,0 +1,427 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar class="gradient-toolbar">
+    <ion-buttons slot="start">
+      <ion-menu-button color="light"></ion-menu-button>
+    </ion-buttons>
+    <ion-title color="light">✨ Area Admin</ion-title>
+    <ion-buttons slot="end">
+      <app-notification-bell></app-notification-bell>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="segment-toolbar">
+    <ion-segment [(ngModel)]="selectedTab" (ionChange)="onSegmentChange($event)" class="modern-segment">
+      <ion-segment-button value="operators">
+        <ion-icon name="people-outline"></ion-icon>
+        <ion-label>Operatori</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="config">
+        <ion-icon name="settings-outline"></ion-icon>
+        <ion-label>Config</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="appointments">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <ion-label>Appuntamenti</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="modern-content">
+  <div [ngSwitch]="selectedTab" class="content-wrapper">
+    <!-- Gestione Operatori -->
+    <div *ngSwitchCase="'operators'">
+      <div class="section-header-modern">
+        <h2>👥 Gestione Operatori</h2>
+        <ion-button (click)="addOperator()" class="add-button" shape="round">
+          <ion-icon name="person-add" slot="start"></ion-icon>
+          Aggiungi
+        </ion-button>
+      </div>
+      
+      <div *ngIf="loading" class="loading-spinner">
+        <ion-spinner color="primary"></ion-spinner>
+      </div>
+      
+      <div *ngIf="!loading && operators.length > 0; else noOperators" class="operators-grid">
+        <ion-card *ngFor="let operator of operators" class="operator-card">
+          <div class="card-status-bar" [style.background-color]="operator.colore || '#667eea'"></div>
+          <ion-card-content>
+            <div class="operator-header">
+              <div class="operator-avatar-large" [style.background-color]="operator.colore || '#667eea'">
+                {{ operator.userId.nome.charAt(0) }}{{ operator.userId.cognome.charAt(0) }}
+              </div>
+              <div class="operator-info">
+                <h3>{{ operator.userId.nome }} {{ operator.userId.cognome }}</h3>
+                <ion-badge [color]="operator.attivo ? 'success' : 'danger'" class="status-badge">
+                  {{ operator.attivo ? '✓ Attivo' : '✗ Inattivo' }}
+                </ion-badge>
+              </div>
+            </div>
+            
+            <div class="operator-details">
+              <div class="specializations">
+                <ion-chip *ngFor="let spec of operator.specializzazioni" color="primary">
+                  <ion-icon name="cut-outline"></ion-icon>
+                  <ion-label>{{ spec }}</ion-label>
+                </ion-chip>
+              </div>
+              
+              <p *ngIf="operator.descrizione" class="description">{{ operator.descrizione }}</p>
+              
+              <div class="availability-info">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>{{ operator.disponibilita.length }} fasce orarie configurate</span>
+              </div>
+            </div>
+            
+            <div class="card-actions">
+              <ion-button fill="clear" size="small" (click)="viewOperator(operator)">
+                <ion-icon name="eye-outline" slot="start"></ion-icon>
+                Visualizza
+              </ion-button>
+              <ion-button fill="clear" size="small" color="primary" (click)="editOperator(operator)">
+                <ion-icon name="create-outline" slot="start"></ion-icon>
+                Modifica
+              </ion-button>
+              <ion-button fill="clear" size="small" color="danger" (click)="deleteOperator(operator)">
+                <ion-icon name="trash-outline" slot="start"></ion-icon>
+                Elimina
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      
+      <ng-template #noOperators>
+        <div class="empty-state-modern">
+          <div class="empty-icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <h3>Nessun operatore configurato</h3>
+          <p>Aggiungi il primo operatore per iniziare a ricevere prenotazioni</p>
+          <ion-button (click)="addOperator()" shape="round" class="cta-button">
+            <ion-icon slot="start" name="person-add-outline"></ion-icon>
+            Aggiungi Primo Operatore
+          </ion-button>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Configurazioni -->
+    <div *ngSwitchCase="'config'">
+      <h2>Configurazioni Sistema</h2>
+      
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Impostazioni Prenotazioni</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">
+                <h3>Intervallo Slot Prenotazione</h3>
+                <p>Durata di ogni slot disponibile per le prenotazioni</p>
+              </ion-label>
+              <ion-select [(ngModel)]="slotDuration" (ionChange)="saveSlotDuration()">
+                <ion-select-option [value]="15">15 minuti</ion-select-option>
+                <ion-select-option [value]="30">30 minuti</ion-select-option>
+                <ion-select-option [value]="45">45 minuti</ion-select-option>
+                <ion-select-option [value]="60">60 minuti</ion-select-option>
+              </ion-select>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">
+                <h3>Orario Apertura</h3>
+              </ion-label>
+              <ion-datetime-button datetime="opening-time"></ion-datetime-button>
+              <ion-modal [keepContentsMounted]="true">
+                <ng-template>
+                  <ion-datetime 
+                    id="opening-time"
+                    presentation="time"
+                    [(ngModel)]="openingTime"
+                    (ionChange)="saveBusinessHours()">
+                  </ion-datetime>
+                </ng-template>
+              </ion-modal>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">
+                <h3>Orario Chiusura</h3>
+              </ion-label>
+              <ion-datetime-button datetime="closing-time"></ion-datetime-button>
+              <ion-modal [keepContentsMounted]="true">
+                <ng-template>
+                  <ion-datetime 
+                    id="closing-time"
+                    presentation="time"
+                    [(ngModel)]="closingTime"
+                    (ionChange)="saveBusinessHours()">
+                  </ion-datetime>
+                </ng-template>
+              </ion-modal>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label position="stacked">
+                <h3>Giorni Lavorativi</h3>
+                <p>Seleziona i giorni in cui il salone è aperto</p>
+              </ion-label>
+            </ion-item>
+            <ion-item lines="none">
+              <ion-grid>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-item lines="none">
+                      <ion-label>Lunedì</ion-label>
+                      <ion-toggle [(ngModel)]="workingDays.lunedi" (ionChange)="saveWorkingDays()" slot="end"></ion-toggle>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-item lines="none">
+                      <ion-label>Martedì</ion-label>
+                      <ion-toggle [(ngModel)]="workingDays.martedi" (ionChange)="saveWorkingDays()" slot="end"></ion-toggle>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-item lines="none">
+                      <ion-label>Mercoledì</ion-label>
+                      <ion-toggle [(ngModel)]="workingDays.mercoledi" (ionChange)="saveWorkingDays()" slot="end"></ion-toggle>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-item lines="none">
+                      <ion-label>Giovedì</ion-label>
+                      <ion-toggle [(ngModel)]="workingDays.giovedi" (ionChange)="saveWorkingDays()" slot="end"></ion-toggle>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-item lines="none">
+                      <ion-label>Venerdì</ion-label>
+                      <ion-toggle [(ngModel)]="workingDays.venerdi" (ionChange)="saveWorkingDays()" slot="end"></ion-toggle>
+                    </ion-item>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-item lines="none">
+                      <ion-label>Sabato</ion-label>
+                      <ion-toggle [(ngModel)]="workingDays.sabato" (ionChange)="saveWorkingDays()" slot="end"></ion-toggle>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+                <ion-row>
+                  <ion-col size="6">
+                    <ion-item lines="none">
+                      <ion-label>Domenica</ion-label>
+                      <ion-toggle [(ngModel)]="workingDays.domenica" (ionChange)="saveWorkingDays()" slot="end"></ion-toggle>
+                    </ion-item>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-item>
+            
+            <ion-item>
+              <ion-label>
+                <h3>Anticipo Prenotazione</h3>
+                <p>Tempo minimo per prenotare (default: 60 minuti)</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Gestione Appuntamenti -->
+    <div *ngSwitchCase="'appointments'">
+      <div class="section-header">
+        <h2>Gestione Appuntamenti</h2>
+        <ion-badge color="primary">{{ filteredAppointments.length }} appuntamenti</ion-badge>
+      </div>
+      
+      <!-- Filtri -->
+      <ion-card>
+        <ion-card-content>
+          <ion-grid>
+            <ion-row>
+              <ion-col size="12" size-md="4">
+                <ion-item>
+                  <ion-label>Stato</ion-label>
+                  <ion-select [(ngModel)]="selectedStatusFilter" (ionChange)="onStatusFilterChange($event)" interface="popover">
+                    <ion-select-option value="all">Tutti</ion-select-option>
+                    <ion-select-option value="confermato">Confermati</ion-select-option>
+                    <ion-select-option value="completato">Completati</ion-select-option>
+                    <ion-select-option value="cancellato">Cancellati</ion-select-option>
+                    <ion-select-option value="in-attesa">In Attesa</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-md="4">
+                <ion-item>
+                  <ion-label>Periodo</ion-label>
+                  <ion-select [(ngModel)]="selectedDateFilter" (ionChange)="onDateFilterChange($event)" interface="popover">
+                    <ion-select-option value="all">Tutti</ion-select-option>
+                    <ion-select-option value="today">Oggi</ion-select-option>
+                    <ion-select-option value="week">Questa Settimana</ion-select-option>
+                    <ion-select-option value="future">Futuri</ion-select-option>
+                    <ion-select-option value="past">Passati</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-md="4">
+                <ion-searchbar 
+                  [(ngModel)]="searchTerm" 
+                  (ionInput)="onSearchChange($event)"
+                  placeholder="Cerca cliente, servizio...">
+                </ion-searchbar>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-card-content>
+      </ion-card>
+      
+      <ion-spinner *ngIf="loadingAppointments" name="crescent"></ion-spinner>
+      
+      <!-- Lista Appuntamenti -->
+      <ion-list *ngIf="!loadingAppointments && filteredAppointments.length > 0; else noAppointments">
+        <ion-card *ngFor="let appointment of filteredAppointments" class="appointment-card">
+          <ion-card-header>
+            <ion-grid>
+              <ion-row>
+                <ion-col size="8">
+                  <ion-card-title>
+                    <ion-icon name="person"></ion-icon>
+                    {{ appointment.clienteId.nome }} {{ appointment.clienteId.cognome }}
+                  </ion-card-title>
+                  <ion-card-subtitle>
+                    <ion-icon name="call"></ion-icon>
+                    {{ appointment.clienteId.telefono }} • 
+                    <ion-icon name="mail"></ion-icon>
+                    {{ appointment.clienteId.email }}
+                  </ion-card-subtitle>
+                </ion-col>
+                <ion-col size="4" class="ion-text-right">
+                  <ion-chip [color]="getStatusColor(appointment.stato)">
+                    <ion-label>{{ getStatusLabel(appointment.stato) }}</ion-label>
+                  </ion-chip>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card-header>
+          
+          <ion-card-content>
+            <ion-list lines="none">
+              <ion-item>
+                <ion-icon name="calendar" slot="start" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Data e Ora</h3>
+                  <p>{{ formatDate(appointment.dataOra) }} alle {{ formatTime(appointment.dataOra) }}</p>
+                </ion-label>
+              </ion-item>
+              
+              <ion-item>
+                <ion-icon name="time" slot="start" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Durata</h3>
+                  <p>{{ appointment.durata }} minuti</p>
+                </ion-label>
+              </ion-item>
+              
+              <ion-item>
+                <ion-icon name="cut" slot="start" color="primary"></ion-icon>
+                <ion-label>
+                  <h3>Servizio</h3>
+                  <p>{{ appointment.servizio }}</p>
+                </ion-label>
+              </ion-item>
+              
+              <ion-item>
+                <ion-avatar slot="start" [style.background-color]="appointment.operatoreId.colore || '#667eea'">
+                  <div class="operator-avatar-small">
+                    {{ appointment.operatoreId.userId.nome.charAt(0) }}{{ appointment.operatoreId.userId.cognome.charAt(0) }}
+                  </div>
+                </ion-avatar>
+                <ion-label>
+                  <h3>Operatore</h3>
+                  <p>{{ appointment.operatoreId.userId.nome }} {{ appointment.operatoreId.userId.cognome }}</p>
+                </ion-label>
+              </ion-item>
+              
+              <ion-item *ngIf="appointment.prezzo">
+                <ion-icon name="cash" slot="start" color="success"></ion-icon>
+                <ion-label>
+                  <h3>Prezzo</h3>
+                  <p>€ {{ appointment.prezzo.toFixed(2) }}</p>
+                </ion-label>
+              </ion-item>
+              
+              <ion-item *ngIf="appointment.note">
+                <ion-icon name="document-text" slot="start" color="medium"></ion-icon>
+                <ion-label class="ion-text-wrap">
+                  <h3>Note</h3>
+                  <p>{{ appointment.note }}</p>
+                </ion-label>
+              </ion-item>
+            </ion-list>
+            
+            <!-- Azioni -->
+            <div class="appointment-actions">
+              <ion-button 
+                *ngIf="appointment.stato === 'in-attesa'" 
+                (click)="changeAppointmentStatus(appointment, 'confermato')" 
+                color="primary" 
+                size="small">
+                <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+                Conferma
+              </ion-button>
+              
+              <ion-button 
+                *ngIf="appointment.stato === 'confermato'" 
+                (click)="changeAppointmentStatus(appointment, 'completato')" 
+                color="success" 
+                size="small">
+                <ion-icon name="checkmark-done" slot="start"></ion-icon>
+                Completa
+              </ion-button>
+              
+              <ion-button 
+                *ngIf="appointment.stato !== 'cancellato' && appointment.stato !== 'completato'" 
+                (click)="changeAppointmentStatus(appointment, 'cancellato')" 
+                color="warning" 
+                size="small">
+                <ion-icon name="close-circle" slot="start"></ion-icon>
+                Cancella
+              </ion-button>
+              
+              <ion-button 
+                (click)="deleteAppointment(appointment)" 
+                color="danger" 
+                fill="outline" 
+                size="small">
+                <ion-icon name="trash" slot="start"></ion-icon>
+                Elimina
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-list>
+      
+      <ng-template #noAppointments>
+        <ion-card *ngIf="!loadingAppointments">
+          <ion-card-content class="ion-text-center">
+            <ion-icon name="calendar-outline" style="font-size: 64px; color: var(--ion-color-medium);"></ion-icon>
+            <p>Nessun appuntamento trovato</p>
+          </ion-card-content>
+        </ion-card>
+      </ng-template>
+    </div>
+  </div>
+</ion-content>
+
+<ion-footer class="modern-footer">
+  <ion-toolbar class="bottom-navigation"></ion-toolbar>
+</ion-footer>

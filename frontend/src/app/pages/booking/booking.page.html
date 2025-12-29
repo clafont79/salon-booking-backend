@@ -1,0 +1,149 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar class="gradient-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title color="light">✨ Prenota Appuntamento</ion-title>
+    <ion-buttons slot="end">
+      <app-notification-bell></app-notification-bell>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="modern-booking-content">
+  <ion-card class="booking-form-card">
+    <ion-card-content>
+      <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
+        
+        <!-- Operator Selection -->
+        <div class="form-group">
+          <div class="input-label">
+            <ion-icon name="person-outline" class="label-icon"></ion-icon>
+            <span>Scegli il tuo operatore</span>
+          </div>
+          <ion-item class="modern-item" lines="none">
+            <ion-select formControlName="operatoreId" (ionChange)="onDateOrOperatorChange()" interface="action-sheet" placeholder="Seleziona operatore">
+              <ion-select-option *ngFor="let op of operators" [value]="op._id">
+                {{ op.userId.nome }} {{ op.userId.cognome }} - {{ op.specializzazioni.join(', ') }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <!-- Date Selection -->
+        <div class="form-group">
+          <div class="input-label">
+            <ion-icon name="calendar-outline" class="label-icon"></ion-icon>
+            <span>Seleziona la data</span>
+          </div>
+          <ion-item class="modern-item" lines="none" button (click)="openDatePicker()">
+            <ion-input 
+              [value]="getFormattedDate()"
+              readonly
+              placeholder="Scegli una data"
+            ></ion-input>
+            <ion-icon name="chevron-forward-outline" slot="end" class="chevron-icon"></ion-icon>
+          </ion-item>
+        </div>
+
+        <ion-modal #dateModal [keepContentsMounted]="true" cssClass="modern-date-modal">
+          <ng-template>
+            <div class="modal-content">
+              <div class="modal-header">
+                <h2>Seleziona Data</h2>
+                <ion-button fill="clear" (click)="dateModal.dismiss()">
+                  <ion-icon name="close" slot="icon-only"></ion-icon>
+                </ion-button>
+              </div>
+              <ion-datetime 
+                presentation="date"
+                [(ngModel)]="selectedDate"
+                [ngModelOptions]="{standalone: true}"
+                (ionChange)="onDateChange(); dateModal.dismiss()"
+                [min]="minDate"
+                locale="it-IT"
+                [firstDayOfWeek]="1"
+              >
+              </ion-datetime>
+            </div>
+          </ng-template>
+        </ion-modal>
+
+        <!-- Time Slot -->
+        <div class="form-group" *ngIf="availableSlots.length > 0">
+          <div class="input-label">
+            <ion-icon name="time-outline" class="label-icon"></ion-icon>
+            <span>Orario disponibile</span>
+          </div>
+          <ion-item class="modern-item" lines="none">
+            <ion-select formControlName="slot" interface="action-sheet" placeholder="Seleziona orario">
+              <ion-select-option *ngFor="let slot of availableSlots" [value]="slot">
+                {{ slot }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <div *ngIf="loading" class="loading-section">
+          <ion-spinner color="primary"></ion-spinner>
+          <p>Caricamento orari disponibili...</p>
+        </div>
+
+        <div *ngIf="!loading && availableSlots.length === 0 && bookingForm.get('data')?.value && bookingForm.get('operatoreId')?.value" class="no-slots-section">
+          <ion-icon name="close-circle" color="warning"></ion-icon>
+          <p>Nessun orario disponibile per questa data</p>
+        </div>
+
+        <!-- Service -->
+        <div class="form-group">
+          <div class="input-label">
+            <ion-icon name="cut-outline" class="label-icon"></ion-icon>
+            <span>Che servizio desideri?</span>
+          </div>
+          <ion-item class="modern-item" lines="none">
+            <ion-select formControlName="servizio" interface="action-sheet" placeholder="Seleziona servizio">
+              <ion-select-option *ngFor="let servizio of availableServices" [value]="servizio">
+                {{ servizio }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <div class="input-label">
+            <ion-icon name="document-text-outline" class="label-icon"></ion-icon>
+            <span>Note aggiuntive (opzionale)</span>
+          </div>
+          <ion-item class="modern-item textarea-item" lines="none">
+            <ion-textarea formControlName="note" rows="3" placeholder="Scrivi qui eventuali richieste speciali..."></ion-textarea>
+          </ion-item>
+        </div>
+
+        <ion-button expand="block" type="submit" [disabled]="bookingForm.invalid" class="submit-button">
+          <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon>
+          Conferma Prenotazione
+        </ion-button>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+<ion-footer class="modern-footer">
+  <ion-toolbar class="bottom-navigation">
+    <div class="nav-items">
+      <div class="nav-item" (click)="goToHome()">
+        <ion-icon name="home"></ion-icon>
+      </div>
+      <div class="nav-item active">
+        <ion-icon name="calendar"></ion-icon>
+      </div>
+      <div class="nav-item" (click)="goToAppointments()">
+        <ion-icon name="list"></ion-icon>
+      </div>
+      <div class="nav-item" (click)="openMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>

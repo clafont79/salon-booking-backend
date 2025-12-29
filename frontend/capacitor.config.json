@@ -1,0 +1,19 @@
+{
+  "name": "hairIT",
+  "appId": "com.hairit.app",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "appName": "hairit-app",
+  "server": {
+    "androidScheme": "https",
+    "cleartext": true,
+    "allowNavigation": [
+      "salon-booking-backend-1w3a.onrender.com"
+    ]
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}

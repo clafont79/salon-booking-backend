@@ -1,0 +1,65 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registrazione</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="register-container">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <ion-item>
+        <ion-label position="floating">Nome</ion-label>
+        <ion-input type="text" formControlName="nome"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Cognome</ion-label>
+        <ion-input type="text" formControlName="cognome"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Email</ion-label>
+        <ion-input type="email" formControlName="email" autocomplete="email"></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+        <p class="error-message">Inserisci un'email valida</p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="floating">Telefono</ion-label>
+        <ion-input type="tel" formControlName="telefono"></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" formControlName="password" autocomplete="new-password"></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+        <p class="error-message">La password deve essere di almeno 6 caratteri</p>
+      </ion-text>
+
+      <ion-item>
+        <ion-label position="floating">Conferma Password</ion-label>
+        <ion-input type="password" formControlName="confirmPassword" autocomplete="new-password"></ion-input>
+      </ion-item>
+      <ion-text color="danger" *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched">
+        <p class="error-message">Le password non corrispondono</p>
+      </ion-text>
+
+      <ion-button expand="block" type="submit" [disabled]="registerForm.invalid" class="ion-margin-top">
+        Registrati
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" (click)="goToLogin()" class="ion-margin-top">
+        Hai già un account? Accedi
+      </ion-button>
+    </form>
+  </div>
+</ion-content>
+
+<ion-footer class="modern-footer">
+  <ion-toolbar class="bottom-navigation"></ion-toolbar>
+</ion-footer>

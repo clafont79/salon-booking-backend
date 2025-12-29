@@ -1,0 +1,112 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar class="gradient-toolbar">
+    <ion-buttons slot="start">
+      <ion-menu-button color="light"></ion-menu-button>
+    </ion-buttons>
+    <ion-title color="light">📋 I Miei Appuntamenti</ion-title>
+    <ion-buttons slot="end">
+      <app-notification-bell></app-notification-bell>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar class="segment-toolbar">
+    <ion-segment [(ngModel)]="filterType" (ionChange)="onFilterChange($event)" mode="ios" class="modern-segment">
+      <ion-segment-button value="upcoming">
+        <ion-label>Prossimi</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="past">
+        <ion-label>Passati</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="all">
+        <ion-label>Tutti</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="modern-appointments-content">
+  <div *ngIf="loading" class="loading-section">
+    <ion-spinner color="primary"></ion-spinner>
+  </div>
+
+  <ion-card *ngFor="let appointment of filteredAppointments" class="modern-appointment-card">
+    <div class="card-status-bar" [ngClass]="getStatusClass(appointment.stato)"></div>
+    <ion-card-content>
+      <div class="appointment-main">
+        <div class="appointment-icon-wrapper">
+          <ion-icon name="cut" class="service-icon"></ion-icon>
+        </div>
+        <div class="appointment-details-section">
+          <h3 class="service-title">{{ appointment.servizio }}</h3>
+          <div class="detail-row">
+            <ion-icon name="calendar" class="detail-icon"></ion-icon>
+            <span>{{ formatDate(appointment.dataOra) }}</span>
+          </div>
+          <div class="detail-row">
+            <ion-icon name="time" class="detail-icon"></ion-icon>
+            <span>{{ formatTime(appointment.dataOra) }} • {{ appointment.durata }} min</span>
+          </div>
+          <div class="detail-row">
+            <ion-icon name="person" class="detail-icon"></ion-icon>
+            <span>{{ appointment.operatoreId.userId.nome }} {{ appointment.operatoreId.userId.cognome }}</span>
+          </div>
+          <div class="detail-row" *ngIf="appointment.operatoreId.specializzazioni.length > 0">
+            <ion-icon name="star" class="detail-icon"></ion-icon>
+            <span class="specializations">{{ appointment.operatoreId.specializzazioni.join(', ') }}</span>
+          </div>
+          <div class="detail-row" *ngIf="appointment.note">
+            <ion-icon name="document-text" class="detail-icon"></ion-icon>
+            <span class="note-text">{{ appointment.note }}</span>
+          </div>
+          <div class="detail-row" *ngIf="appointment.prezzo">
+            <ion-icon name="cash" class="detail-icon"></ion-icon>
+            <span class="price-text">€{{ appointment.prezzo }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card-footer">
+        <ion-badge [color]="getStatusColor(appointment.stato)" class="status-badge-modern">
+          {{ appointment.stato }}
+        </ion-badge>
+        
+        <ion-button 
+          *ngIf="appointment.stato === 'confermato'" 
+          size="small" 
+          fill="outline"
+          color="danger" 
+          class="cancel-button"
+          (click)="cancelAppointment(appointment)">
+          <ion-icon slot="start" name="close-circle-outline"></ion-icon>
+          Cancella
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <div *ngIf="!loading && filteredAppointments.length === 0" class="empty-state-modern">
+    <div class="empty-illustration">
+      <ion-icon name="calendar-clear-outline"></ion-icon>
+    </div>
+    <h3>Nessun appuntamento</h3>
+    <p>{{ getEmptyMessage() }}</p>
+  </div>
+</ion-content>
+
+<ion-footer class="modern-footer">
+  <ion-toolbar class="bottom-navigation">
+    <div class="nav-items">
+      <div class="nav-item" (click)="goToHome()">
+        <ion-icon name="home"></ion-icon>
+      </div>
+      <div class="nav-item" (click)="goToBooking()">
+        <ion-icon name="calendar"></ion-icon>
+      </div>
+      <div class="nav-item active">
+        <ion-icon name="list"></ion-icon>
+      </div>
+      <div class="nav-item" (click)="openMenu()">
+        <ion-icon name="menu"></ion-icon>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>

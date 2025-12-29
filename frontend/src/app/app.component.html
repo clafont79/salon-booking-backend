@@ -1,0 +1,76 @@
+<ion-app>
+  <!-- Splash Screen -->
+  <div class="splash-screen" *ngIf="showSplash">
+    <div class="splash-content">
+      <div class="logo-container">
+        <ion-icon name="cut-outline" class="logo-icon"></ion-icon>
+        <div class="logo-rings">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+        </div>
+      </div>
+      <h1 class="app-title">Salon Booking</h1>
+      <p class="app-subtitle">Il tuo stile, il nostro impegno</p>
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+
+  <ion-split-pane contentId="main-content">
+    <ion-menu contentId="main-content" type="overlay" *ngIf="authService.isAuthenticated">
+      <ion-content>
+        <!-- User Profile Section -->
+        <div class="user-profile-section">
+          <div class="user-avatar">
+            <ion-icon name="person-circle" size="large"></ion-icon>
+          </div>
+          <div class="user-info">
+            <h3>{{ authService.currentUserValue?.nome }} {{ authService.currentUserValue?.cognome }}</h3>
+            <p>{{ authService.currentUserValue?.email }}</p>
+            <ion-badge *ngIf="authService.isAdmin" color="warning">
+              <ion-icon name="shield-checkmark" size="small"></ion-icon>
+              Admin
+            </ion-badge>
+            <ion-badge *ngIf="!authService.isAdmin" color="primary">Cliente</ion-badge>
+          </div>
+        </div>
+        
+        <ion-list id="inbox-list">
+          <ion-list-header>Menu</ion-list-header>
+
+          <!-- Menu per clienti -->
+          <ng-container *ngIf="!authService.isAdmin">
+            <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
+              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+                <ion-icon aria-hidden="true" slot="start" [name]="p.icon"></ion-icon>
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </ng-container>
+
+          <!-- Menu per admin -->
+          <ng-container *ngIf="authService.isAdmin">
+            <ion-menu-toggle auto-hide="false" *ngFor="let p of adminPages; let i = index">
+              <ion-item routerDirection="root" [routerLink]="[p.url]" lines="none" detail="false" routerLinkActive="selected">
+                <ion-icon aria-hidden="true" slot="start" [name]="p.icon"></ion-icon>
+                <ion-label>{{ p.title }}</ion-label>
+              </ion-item>
+            </ion-menu-toggle>
+          </ng-container>
+        </ion-list>
+
+        <ion-list id="labels-list">
+          <ion-item button (click)="logout()" lines="none">
+            <ion-icon aria-hidden="true" slot="start" name="log-out"></ion-icon>
+            <ion-label>Esci</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ion-menu>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+  </ion-split-pane>
+</ion-app>

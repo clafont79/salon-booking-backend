@@ -1,0 +1,32 @@
+.register-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+.error-message {
+  font-size: 12px;
+  padding: 5px 16px;
+  margin: 0;
+}
+
+ion-item {
+  margin-bottom: 15px;
+}
+
+// Modern Footer
+.modern-footer {
+  ion-toolbar.bottom-navigation {
+    --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --border-color: transparent;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    --min-height: 5px;
+    box-shadow: 0 -2px 8px rgba(102, 126, 234, 0.3);
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    
+    .nav-items {
+      display: none;
+    }
+  }
+}

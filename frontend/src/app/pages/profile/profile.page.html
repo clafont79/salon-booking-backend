@@ -1,0 +1,211 @@
+<ion-header [translucent]="true" class="modern-header">
+  <ion-toolbar class="gradient-toolbar">
+    <ion-buttons slot="start">
+      <ion-menu-button color="light"></ion-menu-button>
+    </ion-buttons>
+    <ion-title color="light">👤 Profilo</ion-title>
+    <ion-buttons slot="end">
+      <app-notification-bell></app-notification-bell>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="profile-container">
+    <!-- Profile Photo Section -->
+    <ion-card class="photo-card">
+      <div class="photo-wrapper">
+        <div class="profile-photo-container">
+          <img 
+            [src]="userProfile.fotoProfilo || 'assets/default-avatar.png'" 
+            alt="Foto profilo"
+            class="profile-photo"
+          />
+          <ion-button 
+            class="photo-edit-btn" 
+            fill="clear" 
+            (click)="selectPhoto()"
+          >
+            <ion-icon name="camera" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+        <h2>{{ userProfile.nome }} {{ userProfile.cognome }}</h2>
+        <p class="user-role">{{ getRoleLabel(userProfile.ruolo) }}</p>
+      </div>
+    </ion-card>
+
+    <!-- Bio Section -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>Biografia</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-textarea
+          [(ngModel)]="userProfile.bio"
+          placeholder="Scrivi qualcosa su di te..."
+          [maxlength]="500"
+          rows="4"
+          [counter]="true"
+        ></ion-textarea>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Personal Info Section -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>Informazioni Personali</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label position="stacked">Nome</ion-label>
+          <ion-input [(ngModel)]="userProfile.nome" placeholder="Nome"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">Cognome</ion-label>
+          <ion-input [(ngModel)]="userProfile.cognome" placeholder="Cognome"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input 
+            [(ngModel)]="userProfile.email" 
+            type="email" 
+            placeholder="email@example.com"
+            [disabled]="true"
+          ></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">Telefono</ion-label>
+          <ion-input [(ngModel)]="userProfile.telefono" placeholder="Telefono"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">Data di Nascita</ion-label>
+          <ion-datetime 
+            [(ngModel)]="userProfile.dataNascita"
+            presentation="date"
+            [max]="maxDate"
+          ></ion-datetime>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Address Section -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>Indirizzo</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label position="stacked">Via</ion-label>
+          <ion-input [(ngModel)]="userProfile.indirizzo.via" placeholder="Via"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">Città</ion-label>
+          <ion-input [(ngModel)]="userProfile.indirizzo.citta" placeholder="Città"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">CAP</ion-label>
+          <ion-input [(ngModel)]="userProfile.indirizzo.cap" placeholder="CAP"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">Provincia</ion-label>
+          <ion-input [(ngModel)]="userProfile.indirizzo.provincia" placeholder="Provincia"></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Preferences Section -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>Preferenze</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-label>Notifiche Email</ion-label>
+          <ion-toggle [(ngModel)]="userProfile.preferenze.notificheEmail"></ion-toggle>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label>Notifiche SMS</ion-label>
+          <ion-toggle [(ngModel)]="userProfile.preferenze.notificheSMS"></ion-toggle>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-label position="stacked">Lingua Preferita</ion-label>
+          <ion-select [(ngModel)]="userProfile.preferenze.linguaPreferita">
+            <ion-select-option value="it">Italiano</ion-select-option>
+            <ion-select-option value="en">English</ion-select-option>
+            <ion-select-option value="es">Español</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Social Links Section -->
+    <ion-card class="info-card">
+      <ion-card-header>
+        <ion-card-title>Social Media</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item lines="none">
+          <ion-icon name="logo-facebook" slot="start" color="primary"></ion-icon>
+          <ion-input [(ngModel)]="userProfile.socialLinks.facebook" placeholder="Facebook URL"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-icon name="logo-instagram" slot="start" color="primary"></ion-icon>
+          <ion-input [(ngModel)]="userProfile.socialLinks.instagram" placeholder="Instagram URL"></ion-input>
+        </ion-item>
+        <ion-item lines="none">
+          <ion-icon name="logo-twitter" slot="start" color="primary"></ion-icon>
+          <ion-input [(ngModel)]="userProfile.socialLinks.twitter" placeholder="Twitter URL"></ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Statistics Section -->
+    <ion-card class="info-card stats-card" *ngIf="userStats">
+      <ion-card-header>
+        <ion-card-title>Le Tue Statistiche</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <ion-icon name="calendar" color="primary"></ion-icon>
+            <div class="stat-value">{{ userStats.total }}</div>
+            <div class="stat-label">Totali</div>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="checkmark-circle" color="success"></ion-icon>
+            <div class="stat-value">{{ userStats.completed }}</div>
+            <div class="stat-label">Completati</div>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="close-circle" color="danger"></ion-icon>
+            <div class="stat-value">{{ userStats.cancelled }}</div>
+            <div class="stat-label">Cancellati</div>
+          </div>
+          <div class="stat-item">
+            <ion-icon name="time" color="warning"></ion-icon>
+            <div class="stat-value">{{ userStats.upcoming }}</div>
+            <div class="stat-label">Prossimi</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <ion-button expand="block" (click)="saveProfile()" [disabled]="isSaving">
+        <ion-icon name="save" slot="start"></ion-icon>
+        {{ isSaving ? 'Salvataggio...' : 'Salva Modifiche' }}
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" (click)="changePassword()">
+        <ion-icon name="key" slot="start"></ion-icon>
+        Cambia Password
+      </ion-button>
+
+      <ion-button expand="block" color="danger" fill="outline" (click)="confirmDeleteAccount()">
+        <ion-icon name="trash" slot="start"></ion-icon>
+        Elimina Account
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,65 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C239B3;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="calendarGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F0F0F0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded background -->
+  <rect width="512" height="512" rx="100" fill="url(#bgGrad)"/>
+  
+  <!-- Calendar body -->
+  <rect x="120" y="140" width="272" height="300" rx="20" fill="url(#calendarGrad)" stroke="#333" stroke-width="4"/>
+  
+  <!-- Calendar header -->
+  <rect x="120" y="140" width="272" height="70" rx="20" fill="#4A90E2"/>
+  <rect x="120" y="180" width="272" height="30" fill="#4A90E2"/>
+  
+  <!-- Calendar rings -->
+  <circle cx="180" cy="150" r="12" fill="none" stroke="#333" stroke-width="6"/>
+  <circle cx="256" cy="150" r="12" fill="none" stroke="#333" stroke-width="6"/>
+  <circle cx="332" cy="150" r="12" fill="none" stroke="#333" stroke-width="6"/>
+  
+  <!-- Calendar grid dots (simplified) -->
+  <circle cx="160" cy="250" r="8" fill="#4A90E2"/>
+  <circle cx="210" cy="250" r="8" fill="#4A90E2"/>
+  <circle cx="260" cy="250" r="8" fill="#4A90E2"/>
+  <circle cx="310" cy="250" r="8" fill="#4A90E2"/>
+  <circle cx="360" cy="250" r="8" fill="#4A90E2"/>
+  
+  <circle cx="160" cy="300" r="8" fill="#4A90E2"/>
+  <circle cx="210" cy="300" r="8" fill="#4A90E2"/>
+  <circle cx="260" cy="300" r="8" fill="#4A90E2"/>
+  <circle cx="310" cy="300" r="8" fill="#4A90E2"/>
+  <circle cx="360" cy="300" r="8" fill="#4A90E2"/>
+  
+  <circle cx="160" cy="350" r="8" fill="#4A90E2"/>
+  <circle cx="210" cy="350" r="8" fill="#4A90E2"/>
+  <circle cx="260" cy="350" r="8" fill="#FF6B9D"/>
+  <circle cx="310" cy="350" r="8" fill="#4A90E2"/>
+  <circle cx="360" cy="350" r="8" fill="#4A90E2"/>
+  
+  <circle cx="160" cy="400" r="8" fill="#4A90E2"/>
+  <circle cx="210" cy="400" r="8" fill="#4A90E2"/>
+  <circle cx="260" cy="400" r="8" fill="#4A90E2"/>
+  
+  <!-- Scissors (stylized and fun) -->
+  <!-- Left handle -->
+  <circle cx="340" cy="360" r="22" fill="#FFC107" stroke="#333" stroke-width="3"/>
+  <!-- Right handle -->
+  <circle cx="400" cy="420" r="22" fill="#FFC107" stroke="#333" stroke-width="3"/>
+  <!-- Blades -->
+  <path d="M 345 370 L 380 400 L 395 410" stroke="#333" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M 395 410 L 420 385" stroke="#333" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M 395 410 L 415 430" stroke="#333" stroke-width="6" stroke-linecap="round" fill="none"/>
+  
+  <!-- Star sparkle for fun touch -->
+  <path d="M 100 100 L 110 120 L 130 125 L 110 135 L 105 155 L 95 135 L 75 130 L 95 120 Z" fill="#FFC107" opacity="0.8"/>
+  <path d="M 420 100 L 430 120 L 450 125 L 430 135 L 425 155 L 415 135 L 395 130 L 415 120 Z" fill="#FFC107" opacity="0.8"/>
+</svg>

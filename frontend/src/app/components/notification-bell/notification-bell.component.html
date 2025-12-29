@@ -1,0 +1,60 @@
+<div class="notification-bell-wrapper">
+  <ion-button fill="clear" class="bell-button" (click)="togglePopover($event)">
+    <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
+    <ion-badge *ngIf="unreadCount > 0" class="notification-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</ion-badge>
+  </ion-button>
+
+  <!-- Popover notifiche -->
+  <div class="notification-popover" *ngIf="showPopover" (click)="$event.stopPropagation()">
+    <div class="popover-header">
+      <h3>Notifiche</h3>
+      <div class="header-actions">
+        <ion-button fill="clear" size="small" (click)="markAllAsRead()" *ngIf="unreadCount > 0">
+          <ion-icon name="checkmark-done" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" (click)="deleteAllRead()">
+          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button fill="clear" size="small" (click)="closePopover()">
+          <ion-icon name="close" slot="icon-only"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="popover-content">
+      <div *ngIf="notifications.length === 0" class="empty-state">
+        <ion-icon name="notifications-off-outline"></ion-icon>
+        <p>Nessuna notifica</p>
+      </div>
+
+      <div class="notification-list" *ngIf="notifications.length > 0">
+        <div 
+          *ngFor="let notification of notifications" 
+          class="notification-item"
+          [class.unread]="!notification.letto"
+          (click)="onNotificationClick(notification)"
+        >
+          <div class="notification-icon">
+            <ion-icon [name]="getNotificationIcon(notification.tipo)"></ion-icon>
+          </div>
+          <div class="notification-content">
+            <h4>{{ notification.titolo }}</h4>
+            <p>{{ notification.messaggio }}</p>
+            <span class="notification-time">{{ formatTime(notification.dataInvio) }}</span>
+          </div>
+          <ion-button 
+            fill="clear" 
+            size="small" 
+            class="delete-btn"
+            (click)="deleteNotification(notification, $event)"
+          >
+            <ion-icon name="close" slot="icon-only"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Backdrop per chiudere popover -->
+<div class="popover-backdrop" *ngIf="showPopover" (click)="closePopover()"></div>
