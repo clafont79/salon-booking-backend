@@ -112,6 +112,10 @@ export class HomePage implements OnInit {
     this.router.navigate(['/appointments']);
   }
 
+  goToPlaces() {
+    this.router.navigate(['/places']);
+  }
+
   formatDate(date: Date | string): string {
     const d = new Date(date);
     return d.toLocaleDateString('it-IT', { 

@@ -62,6 +62,16 @@
         <p>Servizi</p>
       </ion-card-content>
     </ion-card>
+
+    <ion-card class="action-card location-card" (click)="goToPlaces()">
+      <ion-card-content>
+        <div class="card-icon-wrapper location-icon">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <h3>Cerca</h3>
+        <p>Salone vicino</p>
+      </ion-card-content>
+    </ion-card>
   </div>
 
   <!-- Upcoming Appointments -->
@@ -124,6 +134,9 @@
       </div>
       <div class="nav-item" (click)="goToBooking()">
         <ion-icon name="calendar"></ion-icon>
+      </div>
+      <div class="nav-item" (click)="goToPlaces()">
+        <ion-icon name="location"></ion-icon>
       </div>
       <div class="nav-item" (click)="goToAppointments()">
         <ion-icon name="list"></ion-icon>

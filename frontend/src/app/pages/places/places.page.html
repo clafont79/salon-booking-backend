@@ -1,0 +1,130 @@
+<ion-header [translucent]="true" class="places-header">
+  <ion-toolbar>
+    <ion-title>Places</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleView()">
+        <ion-icon [name]="viewMode === 'map' ? 'list' : 'map'" slot="icon-only"></ion-icon>
+        <span class="view-label">{{ viewMode === 'map' ? 'Lista' : 'Mappa' }}</span>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Search and Filters -->
+  <ion-toolbar class="search-toolbar">
+    <ion-searchbar 
+      [(ngModel)]="searchQuery"
+      (ionInput)="onSearchChange($event)"
+      placeholder="Cerca parrucchieri, barbieri..."
+      animated="true"
+      class="custom-searchbar">
+    </ion-searchbar>
+  </ion-toolbar>
+
+  <ion-toolbar class="filter-toolbar">
+    <ion-segment [(ngModel)]="filterType" (ionChange)="filterByType(filterType)">
+      <ion-segment-button value="all">
+        <ion-label>Tutti</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="parrucchiere">
+        <ion-label>Parrucchieri</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="barbiere">
+        <ion-label>Barbieri</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="places-content">
+  
+  <!-- Map View -->
+  <div *ngIf="viewMode === 'map'" class="map-container">
+    <div #map class="map"></div>
+
+    <!-- Map Controls -->
+    <div class="map-controls">
+      <ion-fab-button size="small" (click)="centerOnCurrentPosition()" class="locate-btn">
+        <ion-icon name="locate"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button size="small" (click)="zoomIn()" class="zoom-btn">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button size="small" (click)="zoomOut()" class="zoom-btn">
+        <ion-icon name="remove"></ion-icon>
+      </ion-fab-button>
+    </div>
+  </div>
+
+  <!-- List View -->
+  <div *ngIf="viewMode === 'list'" class="list-container">
+    <ion-list>
+      <ion-item 
+        *ngFor="let place of filteredPlaces" 
+        button="true"
+        detail="true"
+        (click)="selectPlace(place)"
+        class="place-item">
+        
+        <div class="place-icon" slot="start">
+          <ion-icon [name]="place.tipo === 'barbiere' ? 'cut-outline' : 'home-outline'"></ion-icon>
+        </div>
+
+        <ion-label>
+          <h2>{{ place.nome }}</h2>
+          <p>{{ place.indirizzo }}, {{ place.citta }}</p>
+          <div class="place-meta">
+            <span *ngIf="place.distanza" class="distance">
+              📏 {{ place.distanza }} km
+            </span>
+            <span *ngIf="place.valutazione" class="rating">
+              ⭐ {{ place.valutazione }}/5
+            </span>
+            <span [class.open]="place.aperto" [class.closed]="!place.aperto" class="status">
+              {{ place.aperto ? '🟢 Aperto' : '🔴 Chiuso' }}
+            </span>
+          </div>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <div *ngIf="filteredPlaces.length === 0" class="empty-state">
+      <ion-icon name="location-outline" class="empty-icon"></ion-icon>
+      <h3>Nessun luogo trovato</h3>
+      <p>Prova a modificare i filtri di ricerca</p>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-overlay">
+    <ion-spinner></ion-spinner>
+    <p>Caricamento luoghi...</p>
+  </div>
+
+</ion-content>
+
+<ion-footer class="modern-footer">
+  <ion-toolbar class="bottom-navigation">
+    <div class="nav-items">
+      <div class="nav-item" (click)="goToHome()">
+        <ion-icon name="home"></ion-icon>
+        <span>Home</span>
+      </div>
+      <div class="nav-item" (click)="goToBooking()">
+        <ion-icon name="calendar"></ion-icon>
+        <span>Challenge</span>
+      </div>
+      <div class="nav-item active" (click)="toggleView()">
+        <ion-icon name="location"></ion-icon>
+        <span>Places</span>
+      </div>
+      <div class="nav-item" (click)="goToAppointments()">
+        <ion-icon name="camera"></ion-icon>
+        <span>Smart</span>
+      </div>
+      <div class="nav-item" (click)="goToProfile()">
+        <ion-icon name="person"></ion-icon>
+        <span>Profile</span>
+      </div>
+    </div>
+  </ion-toolbar>
+</ion-footer>

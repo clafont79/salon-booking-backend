@@ -83,7 +83,7 @@
 
 .action-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   padding: 0 16px;
   margin-top: 20px;
@@ -185,6 +185,13 @@
     .secondary-icon {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       box-shadow: 0 6px 20px rgba(102, 126, 234, 0.35);
+    }
+  }
+
+  .location-card {
+    .location-icon {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      box-shadow: 0 6px 20px rgba(79, 172, 254, 0.4);
     }
   }
 }
