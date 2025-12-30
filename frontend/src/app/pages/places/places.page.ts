@@ -19,7 +19,9 @@ export class PlacesPage implements OnInit {
   places: Place[] = [];
   filteredPlaces: Place[] = [];
   currentPosition: { lat: number; lng: number } | null = null;
+  userLocation: { lat: number; lng: number } | null = null;
   markers: any[] = [];
+  userMarker: any;
   viewMode: 'map' | 'list' = 'map';
   searchQuery: string = '';
   filterType: string = 'all';
@@ -52,6 +54,7 @@ export class PlacesPage implements OnInit {
           lat: position.latitude,
           lng: position.longitude
         };
+        this.userLocation = this.currentPosition;
       }
     } catch (error) {
       console.error('Errore geolocalizzazione:', error);
@@ -60,6 +63,7 @@ export class PlacesPage implements OnInit {
         lat: 45.4642,
         lng: 9.1900
       };
+      this.userLocation = this.currentPosition;
     }
   }
 
@@ -208,7 +212,7 @@ export class PlacesPage implements OnInit {
   }
 
   centerOnCurrentPosition() {
-    if (this.map && this.currentPosition) {
+    if (this.map && this.userLocation) {
       this.map.setView([this.userLocation.lat, this.userLocation.lng], 15);
     }
   }

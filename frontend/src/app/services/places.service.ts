@@ -143,6 +143,142 @@ export class PlacesService {
         sabato: '9:00-19:00',
         domenica: 'Chiuso'
       }
+    },
+    // Location Napoli Centro
+    {
+      _id: '6',
+      nome: 'Salone Partenopeo',
+      indirizzo: 'Via Toledo 234',
+      citta: 'Napoli',
+      cap: '80134',
+      telefono: '+39 081 5551234',
+      email: 'info@partenopeo.it',
+      tipo: 'parrucchiere',
+      coordinate: {
+        lat: 40.8404,
+        lng: 14.2447
+      },
+      servizi: ['Taglio donna', 'Colore', 'Piega', 'Extension', 'Acconciature sposa'],
+      valutazione: 4.6,
+      numeroRecensioni: 187,
+      aperto: true,
+      orari: {
+        lunedi: '9:00-19:00',
+        martedi: '9:00-19:00',
+        mercoledi: '9:00-19:00',
+        giovedi: '9:00-19:00',
+        venerdi: '9:00-20:00',
+        sabato: '9:00-19:00',
+        domenica: 'Chiuso'
+      }
+    },
+    {
+      _id: '7',
+      nome: 'Barbiere Napoletano',
+      indirizzo: 'Via Chiaia 95',
+      citta: 'Napoli',
+      cap: '80121',
+      telefono: '+39 081 7771234',
+      email: 'barber@napoletano.it',
+      tipo: 'barbiere',
+      coordinate: {
+        lat: 40.8333,
+        lng: 14.2450
+      },
+      servizi: ['Taglio classico', 'Barba', 'Rasatura tradizionale', 'Hot towel'],
+      valutazione: 4.9,
+      numeroRecensioni: 245,
+      aperto: true,
+      orari: {
+        lunedi: '8:00-20:00',
+        martedi: '8:00-20:00',
+        mercoledi: '8:00-20:00',
+        giovedi: '8:00-20:00',
+        venerdi: '8:00-20:30',
+        sabato: '8:00-19:30',
+        domenica: '9:00-14:00'
+      }
+    },
+    {
+      _id: '8',
+      nome: 'Centro Bellezza Vesuvio',
+      indirizzo: 'Piazza del Plebiscito 18',
+      citta: 'Napoli',
+      cap: '80132',
+      telefono: '+39 081 4441234',
+      email: 'info@vesuviobeauty.it',
+      tipo: 'centro_estetico',
+      coordinate: {
+        lat: 40.8359,
+        lng: 14.2488
+      },
+      servizi: ['Taglio', 'Colore', 'Trattamenti viso', 'Manicure', 'Pedicure', 'Massaggi'],
+      valutazione: 4.4,
+      numeroRecensioni: 142,
+      aperto: true,
+      orari: {
+        lunedi: '9:30-19:30',
+        martedi: '9:30-19:30',
+        mercoledi: '9:30-19:30',
+        giovedi: '9:30-19:30',
+        venerdi: '9:30-19:30',
+        sabato: '9:30-18:00',
+        domenica: '10:00-17:00'
+      }
+    },
+    {
+      _id: '9',
+      nome: 'Hair Art Vomero',
+      indirizzo: 'Via Scarlatti 112',
+      citta: 'Napoli',
+      cap: '80127',
+      telefono: '+39 081 5567890',
+      email: 'contact@hairartvomero.it',
+      tipo: 'parrucchiere',
+      coordinate: {
+        lat: 40.8467,
+        lng: 14.2383
+      },
+      servizi: ['Taglio moderno', 'Colore avanzato', 'Balayage', 'Trattamenti ricostruttivi'],
+      valutazione: 4.8,
+      numeroRecensioni: 201,
+      aperto: true,
+      orari: {
+        lunedi: '9:00-19:30',
+        martedi: '9:00-19:30',
+        mercoledi: '9:00-19:30',
+        giovedi: '9:00-19:30',
+        venerdi: '9:00-20:00',
+        sabato: '9:00-19:00',
+        domenica: 'Chiuso'
+      }
+    },
+    {
+      _id: '10',
+      nome: 'Stile Mediterraneo',
+      indirizzo: 'Via dei Tribunali 67',
+      citta: 'Napoli',
+      cap: '80138',
+      telefono: '+39 081 2221234',
+      email: 'info@stilemediterraneo.it',
+      tipo: 'parrucchiere',
+      coordinate: {
+        lat: 40.8518,
+        lng: 14.2581
+      },
+      servizi: ['Taglio', 'Styling', 'Permanente', 'Stiratura brasiliana', 'Colore'],
+      valutazione: 4.5,
+      numeroRecensioni: 163,
+      aperto: false,
+      orari: {
+        lunedi: '9:00-19:00',
+        martedi: '9:00-19:00',
+        mercoledi: 'Chiuso',
+        giovedi: '9:00-19:00',
+        venerdi: '9:00-19:00',
+        sabato: '9:00-18:00',
+        domenica: 'Chiuso'
+      }
     }
   ];
 
