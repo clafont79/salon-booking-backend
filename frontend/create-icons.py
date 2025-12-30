@@ -1,73 +1,91 @@
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-# Creiamo le icone manualmente con PIL - SOLO CALENDARIO SU SFONDO BIANCO
 def create_app_icon(size):
-    # Crea immagine con sfondo bianco pulito
+    """Crea icona hairIT con forbici su sfondo gradiente viola"""
+    # Crea immagine con gradiente viola (hairIT brand colors: #667eea -> #764ba2)
     img = Image.new('RGBA', (size, size), (255, 255, 255, 255))
     draw = ImageDraw.Draw(img)
     
+    # Disegna gradiente verticale
+    for y in range(size):
+        ratio = y / size
+        r = int(102 + (118 - 102) * ratio)
+        g = int(126 + (75 - 126) * ratio)
+        b = int(234 + (162 - 234) * ratio)
+        draw.line([(0, y), (size, y)], fill=(r, g, b, 255))
+    
     # Proporzioni in base alla dimensione
     scale = size / 512
+    center_x = size // 2
+    center_y = size // 2
     
-    # Calendario body (bianco con bordo)
-    cal_x = int(100 * scale)
-    cal_y = int(120 * scale)
-    cal_w = int(312 * scale)
-    cal_h = int(340 * scale)
-    draw.rounded_rectangle(
-        [(cal_x, cal_y), (cal_x + cal_w, cal_y + cal_h)],
-        radius=int(24 * scale),
-        fill=(255, 255, 255, 255),
-        outline=(74, 144, 226, 255),
-        width=max(2, int(8 * scale))
+    # Disegna forbici stilizzate (simbolo ✂)
+    # Lama sinistra inclinata
+    left_blade_w = int(50 * scale)
+    left_blade_h = int(120 * scale)
+    left_x = center_x - int(40 * scale)
+    left_y = center_y - int(20 * scale)
+    
+    # Crea lama sinistra e ruotala
+    left_blade = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+    left_draw = ImageDraw.Draw(left_blade)
+    left_draw.ellipse(
+        [(left_x - left_blade_w//2, left_y - left_blade_h//2),
+         (left_x + left_blade_w//2, left_y + left_blade_h//2)],
+        fill=(255, 255, 255, 255)
     )
+    left_blade = left_blade.rotate(-25, center=(center_x, center_y), resample=Image.BICUBIC)
+    img = Image.alpha_composite(img, left_blade)
     
-    # Calendario header (blu gradiente simulato)
-    header_h = int(90 * scale)
-    draw.rounded_rectangle(
-        [(cal_x, cal_y), (cal_x + cal_w, cal_y + header_h)],
-        radius=int(24 * scale),
-        fill=(74, 144, 226, 255)
+    # Lama destra inclinata
+    right_blade_w = int(50 * scale)
+    right_blade_h = int(120 * scale)
+    right_x = center_x + int(40 * scale)
+    right_y = center_y - int(20 * scale)
+    
+    right_blade = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+    right_draw = ImageDraw.Draw(right_blade)
+    right_draw.ellipse(
+        [(right_x - right_blade_w//2, right_y - right_blade_h//2),
+         (right_x + right_blade_w//2, right_y + right_blade_h//2)],
+        fill=(255, 255, 255, 255)
     )
-    draw.rectangle(
-        [(cal_x, cal_y + int(50 * scale)), (cal_x + cal_w, cal_y + header_h)],
-        fill=(74, 144, 226, 255)
-    )
+    right_blade = right_blade.rotate(25, center=(center_x, center_y), resample=Image.BICUBIC)
+    img = Image.alpha_composite(img, right_blade)
     
-    # Anelli del calendario (più grandi e evidenti)
-    ring_y = cal_y - int(5 * scale)
-    ring_r = int(16 * scale)
-    for ring_x in [int(160 * scale), int(256 * scale), int(352 * scale)]:
-        draw.ellipse(
-            [(ring_x - ring_r, ring_y - ring_r), (ring_x + ring_r, ring_y + ring_r)],
-            fill=(51, 51, 51, 255)
-        )
+    # Manici circolari (anelli delle forbici)
+    handle_r = int(35 * scale)
+    handle_thickness = max(2, int(8 * scale))
     
-    # Griglia del calendario (giorni della settimana)
-    dot_r = int(10 * scale)
-    positions = [
-        (140, 240), (180, 240), (220, 240), (260, 240), (300, 240), (340, 240), (380, 240),
-        (140, 285), (180, 285), (220, 285), (260, 285), (300, 285), (340, 285), (380, 285),
-        (140, 330), (180, 330), (220, 330), (260, 330), (300, 330), (340, 330), (380, 330),
-        (140, 375), (180, 375), (220, 375), (260, 375), (300, 375), (340, 375), (380, 375),
-        (140, 420), (180, 420), (220, 420), (260, 420), (300, 420)
-    ]
-    for x, y in positions:
-        sx = int(x * scale)
-        sy = int(y * scale)
-        draw.ellipse(
-            [(sx - dot_r, sy - dot_r), (sx + dot_r, sy + dot_r)],
-            fill=(74, 144, 226, 255)
-        )
-    
-    # Evidenzia data importante (rosa/rosso)
-    sx = int(260 * scale)
-    sy = int(330 * scale)
-    highlight_r = int(14 * scale)
+    # Manico sinistro
+    left_handle_x = center_x - int(65 * scale)
+    left_handle_y = center_y + int(80 * scale)
     draw.ellipse(
-        [(sx - highlight_r, sy - highlight_r), (sx + highlight_r, sy + highlight_r)],
-        fill=(255, 87, 87, 255)
+        [(left_handle_x - handle_r, left_handle_y - handle_r),
+         (left_handle_x + handle_r, left_handle_y + handle_r)],
+        fill=None,
+        outline=(255, 255, 255, 255),
+        width=handle_thickness
+    )
+    
+    # Manico destro
+    right_handle_x = center_x + int(65 * scale)
+    right_handle_y = center_y + int(80 * scale)
+    draw.ellipse(
+        [(right_handle_x - handle_r, right_handle_y - handle_r),
+         (right_handle_x + handle_r, right_handle_y + handle_r)],
+        fill=None,
+        outline=(255, 255, 255, 255),
+        width=handle_thickness
+    )
+    
+    # Perno centrale (dove si incrociano le lame)
+    pivot_r = int(20 * scale)
+    draw.ellipse(
+        [(center_x - pivot_r, center_y - pivot_r),
+         (center_x + pivot_r, center_y + pivot_r)],
+        fill=(255, 255, 255, 255)
     )
     
     return img
@@ -83,19 +101,23 @@ sizes = {
 
 base_path = r'android\app\src\main\res'
 
+print("🎨 Generazione icone hairIT...")
+
 for folder, size in sizes.items():
     folder_path = os.path.join(base_path, folder)
     
     # Crea ic_launcher.png
     icon = create_app_icon(size)
     icon.save(os.path.join(folder_path, 'ic_launcher.png'))
+    print(f"  ✓ {folder}/ic_launcher.png ({size}x{size})")
     
     # Crea ic_launcher_round.png (stessa icona)
     icon.save(os.path.join(folder_path, 'ic_launcher_round.png'))
+    print(f"  ✓ {folder}/ic_launcher_round.png ({size}x{size})")
     
-    # Crea ic_launcher_foreground.png (versione con trasparenza)
+    # Crea ic_launcher_foreground.png (versione con trasparenza per adaptive icon)
     icon.save(os.path.join(folder_path, 'ic_launcher_foreground.png'))
-    
-    print(f"Creato icone per {folder} ({size}x{size})")
+    print(f"  ✓ {folder}/ic_launcher_foreground.png ({size}x{size})")
 
-print("\n✓ Icone create con successo!")
+print("\n✨ Icone hairIT create con successo!")
+print("📱 Le icone con forbici e gradiente viola sono pronte per l'APK")

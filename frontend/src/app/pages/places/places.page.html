@@ -1,15 +1,14 @@
 <ion-header [translucent]="true" class="places-header">
   <ion-toolbar>
-    <ion-title>Places</ion-title>
+    <ion-title>Salone Vicino</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="toggleView()">
         <ion-icon [name]="viewMode === 'map' ? 'list' : 'map'" slot="icon-only"></ion-icon>
-        <span class="view-label">{{ viewMode === 'map' ? 'Lista' : 'Mappa' }}</span>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 
-  <!-- Search and Filters -->
+  <!-- Search and Filters Combined -->
   <ion-toolbar class="search-toolbar">
     <ion-searchbar 
       [(ngModel)]="searchQuery"
@@ -19,23 +18,22 @@
       class="custom-searchbar">
     </ion-searchbar>
   </ion-toolbar>
-
-  <ion-toolbar class="filter-toolbar">
-    <ion-segment [(ngModel)]="filterType" (ionChange)="filterByType(filterType)">
-      <ion-segment-button value="all">
-        <ion-label>Tutti</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="parrucchiere">
-        <ion-label>Parrucchieri</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="barbiere">
-        <ion-label>Barbieri</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="places-content">
+  
+  <!-- Filtri Flottanti -->
+  <div class="floating-filters">
+    <ion-chip [color]="filterType === 'all' ? 'primary' : 'medium'" (click)="filterByType('all')">
+      <ion-label>Tutti</ion-label>
+    </ion-chip>
+    <ion-chip [color]="filterType === 'parrucchiere' ? 'primary' : 'medium'" (click)="filterByType('parrucchiere')">
+      <ion-label>Parrucchieri</ion-label>
+    </ion-chip>
+    <ion-chip [color]="filterType === 'barbiere' ? 'primary' : 'medium'" (click)="filterByType('barbiere')">
+      <ion-label>Barbieri</ion-label>
+    </ion-chip>
+  </div>
   
   <!-- Map View -->
   <div *ngIf="viewMode === 'map'" class="map-container">
