@@ -23,6 +23,17 @@ export interface Appointment {
   note?: string;
   stato: 'confermato' | 'completato' | 'cancellato' | 'in-attesa';
   prezzo?: number;
+  salonId?: {
+    _id: string;
+    nome: string;
+    indirizzo: string;
+    citta: string;
+    telefono: string;
+  };
+  nomeSalone?: string;
+  metodoPagamento?: 'contanti' | 'carta' | 'paypal' | 'google-pay' | 'non-pagato';
+  pagato?: boolean;
+  transazioneId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -719,7 +719,8 @@ export class BookingPage implements OnInit {
       console.log('Errori:', this.bookingForm.errors);
       return;
     }
-formValue = this.bookingForm.value;
+
+    const formValue = this.bookingForm.value;
     console.log('Form values:', formValue);
     
     const [hours, minutes] = formValue.slot.split(':');
@@ -738,7 +739,7 @@ formValue = this.bookingForm.value;
 
     // Ottieni il prezzo del servizio dall'operatore
     const selectedOperator = this.operators.find(op => op._id === formValue.operatoreId);
-    const servicePrice = selectedOperator?.servizi.find(s => s.nome === formValue.servizio)?.prezzo || 0;
+    const servicePrice = selectedOperator?.servizi?.find(s => s.nome === formValue.servizio)?.prezzo || 0;
 
     // Mostra modal di pagamento se c'è un prezzo
     if (servicePrice > 0) {
@@ -793,8 +794,7 @@ formValue = this.bookingForm.value;
           header: 'Successo',
           message: paid 
             ? 'Appuntamento prenotato e pagato con successo!' 
-             'Successo',
-          message: 'Appuntamento prenotato con successo!',
+            : 'Appuntamento prenotato con successo!',
           buttons: [{
             text: 'OK',
             handler: () => {

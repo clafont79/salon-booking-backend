@@ -21,6 +21,11 @@ export interface Operator {
   colore?: string;
   disponibilita: Disponibilita[];
   attivo?: boolean;
+  servizi?: Array<{
+    nome: string;
+    durata: number;
+    prezzo: number;
+  }>;
   createdAt?: Date;
 }
 
