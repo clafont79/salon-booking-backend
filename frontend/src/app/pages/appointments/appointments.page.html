@@ -37,6 +37,10 @@
         </div>
         <div class="appointment-details-section">
           <h3 class="service-title">{{ appointment.servizio }}</h3>
+          <div class="detail-row" *ngIf="appointment.salonId || appointment.nomeSalone">
+            <ion-icon name="business" class="detail-icon"></ion-icon>
+            <span class="salon-name">{{ appointment.salonId?.nome || appointment.nomeSalone }}</span>
+          </div>
           <div class="detail-row">
             <ion-icon name="calendar" class="detail-icon"></ion-icon>
             <span>{{ formatDate(appointment.dataOra) }}</span>
@@ -60,6 +64,10 @@
           <div class="detail-row" *ngIf="appointment.prezzo">
             <ion-icon name="cash" class="detail-icon"></ion-icon>
             <span class="price-text">€{{ appointment.prezzo }}</span>
+          </div>
+          <div class="detail-row" *ngIf="appointment.pagato">
+            <ion-icon name="checkmark-circle" class="detail-icon" color="success"></ion-icon>
+            <span class="payment-status">Pagato tramite {{ appointment.metodoPagamento }}</span>
           </div>
         </div>
       </div>

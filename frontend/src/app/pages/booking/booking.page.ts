@@ -3,10 +3,11 @@ import * as chrono from 'chrono-node';
 import { Capacitor } from '@capacitor/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, LoadingController, IonModal, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, IonModal, ToastController, ModalController } from '@ionic/angular';
 import { AppointmentService } from '../../services/appointment.service';
 import { OperatorService } from '../../services/operator.service';
 import { Operator } from '../../models/operator.model';
+import { PaymentModalComponent } from '../../components/payment-modal/payment-modal.component';
 
 @Component({
   selector: 'app-booking',
@@ -42,7 +43,8 @@ export class BookingPage implements OnInit {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private modalController: ModalController
   ) {
     // detect native speech plugin presence (cordova plugin)
     try {
@@ -717,13 +719,7 @@ export class BookingPage implements OnInit {
       console.log('Errori:', this.bookingForm.errors);
       return;
     }
-
-    const loading = await this.loadingController.create({
-      message: 'Prenotazione in corso...'
-    });
-    await loading.present();
-
-    const formValue = this.bookingForm.value;
+formValue = this.bookingForm.value;
     console.log('Form values:', formValue);
     
     const [hours, minutes] = formValue.slot.split(':');
@@ -740,11 +736,52 @@ export class BookingPage implements OnInit {
       0
     );
 
+    // Ottieni il prezzo del servizio dall'operatore
+    const selectedOperator = this.operators.find(op => op._id === formValue.operatoreId);
+    const servicePrice = selectedOperator?.servizi.find(s => s.nome === formValue.servizio)?.prezzo || 0;
+
+    // Mostra modal di pagamento se c'è un prezzo
+    if (servicePrice > 0) {
+      const modal = await this.modalController.create({
+        component: PaymentModalComponent,
+        componentProps: {
+          amount: servicePrice,
+          appointmentId: '' // Verrà impostato dopo la creazione dell'appuntamento
+        },
+        cssClass: 'payment-modal'
+      });
+
+      await modal.present();
+      const { data } = await modal.onDidDismiss();
+
+      if (data && data.success) {
+        // Crea appuntamento con info di pagamento
+        await this.createAppointmentWithPayment(dataOra, formValue, data.method, data.paid);
+      }
+    } else {
+      // Crea appuntamento senza pagamento
+      await this.createAppointmentWithPayment(dataOra, formValue, 'non-pagato', false);
+    }
+  }
+
+  private async createAppointmentWithPayment(
+    dataOra: Date,
+    formValue: any,
+    paymentMethod: string,
+    paid: boolean
+  ) {
+    const loading = await this.loadingController.create({
+      message: 'Prenotazione in corso...'
+    });
+    await loading.present();
+
     const appointmentData = {
       operatoreId: formValue.operatoreId,
       dataOra: dataOra.toISOString(),
       servizio: formValue.servizio,
-      note: formValue.note
+      note: formValue.note,
+      metodoPagamento: paymentMethod,
+      pagato: paid
     };
     
     console.log('Appointment data to send:', appointmentData);
@@ -754,6 +791,9 @@ export class BookingPage implements OnInit {
         loading.dismiss();
         const alert = await this.alertController.create({
           header: 'Successo',
+          message: paid 
+            ? 'Appuntamento prenotato e pagato con successo!' 
+             'Successo',
           message: 'Appuntamento prenotato con successo!',
           buttons: [{
             text: 'OK',

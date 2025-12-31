@@ -1,5 +1,6 @@
 const Appointment = require('../models/Appointment');
 const Operator = require('../models/Operator');
+const Salon = require('../models/Salon');
 const Configuration = require('../models/Configuration');
 
 // @desc    Crea nuovo appuntamento
@@ -34,7 +35,8 @@ exports.createAppointment = async (req, res) => {
       .populate({
         path: 'operatoreId',
         populate: { path: 'userId', select: 'nome cognome' }
-      });
+      })
+      .populate('salonId', 'nome indirizzo citta telefono');
 
     res.status(201).json(populatedAppointment);
   } catch (error) {
@@ -78,6 +80,7 @@ exports.getAppointments = async (req, res) => {
         path: 'operatoreId',
         populate: { path: 'userId', select: 'nome cognome' }
       })
+      .populate('salonId', 'nome indirizzo citta telefono')
       .sort({ dataOra: 1 });
 
     res.json(appointments);

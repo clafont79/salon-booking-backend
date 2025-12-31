@@ -11,6 +11,15 @@ const appointmentSchema = new mongoose.Schema({
     ref: 'Operator',
     required: true
   },
+  salonId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Salon',
+    default: null
+  },
+  nomeSalone: {
+    type: String,
+    default: 'Dionisio' // Nome di default per appuntamenti esistenti
+  },
   dataOra: {
     type: Date,
     required: true
@@ -37,6 +46,19 @@ const appointmentSchema = new mongoose.Schema({
   prezzo: {
     type: Number,
     default: 0
+  },
+  metodoPagamento: {
+    type: String,
+    enum: ['contanti', 'carta', 'paypal', 'google-pay', 'non-pagato'],
+    default: 'non-pagato'
+  },
+  pagato: {
+    type: Boolean,
+    default: false
+  },
+  transazioneId: {
+    type: String,
+    default: null
   },
   createdAt: {
     type: Date,

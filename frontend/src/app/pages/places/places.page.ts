@@ -69,6 +69,12 @@ export class PlacesPage implements OnInit {
 
   async loadPlaces() {
     this.loading = true;
+    
+    // Assicurati che ci sia una posizione
+    if (!this.currentPosition) {
+      await this.getCurrentLocation();
+    }
+    
     if (this.currentPosition) {
       this.placesService.getNearbyPlaces(
         this.currentPosition.lat,
@@ -88,6 +94,10 @@ export class PlacesPage implements OnInit {
           this.loading = false;
         }
       });
+    } else {
+      // Se non riusciamo a ottenere la posizione, ferma il loading
+      console.error('Impossibile ottenere la posizione');
+      this.loading = false;
     }
   }
 

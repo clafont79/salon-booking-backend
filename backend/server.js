@@ -12,6 +12,7 @@ const operatorRoutes = require('./routes/operatorRoutes');
 const configRoutes = require('./routes/configRoutes');
 const userRoutes = require('./routes/userRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const salonRoutes = require('./routes/salonRoutes');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api/operators', operatorRoutes);
 app.use('/api/config', configRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/salons', salonRoutes);
 
 // Route di test
 app.get('/', (req, res) => {

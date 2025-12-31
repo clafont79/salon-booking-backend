@@ -1,0 +1,88 @@
+<div class="payment-modal-content">
+  <div class="modal-header">
+    <h2>Completa il Pagamento</h2>
+    <ion-button fill="clear" (click)="dismiss()">
+      <ion-icon name="close" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+
+  <div class="payment-info">
+    <div class="amount-display">
+      <span class="label">Totale da pagare:</span>
+      <span class="amount">€{{ amount }}</span>
+    </div>
+  </div>
+
+  <div class="payment-methods">
+    <h3>Scegli il metodo di pagamento</h3>
+
+    <!-- PayPal Button -->
+    <div class="payment-option">
+      <div class="option-header" (click)="selectMethod('paypal')">
+        <ion-icon name="logo-paypal" class="payment-icon paypal"></ion-icon>
+        <span class="option-label">PayPal</span>
+        <ion-radio-group [(ngModel)]="selectedMethod">
+          <ion-radio value="paypal"></ion-radio>
+        </ion-radio-group>
+      </div>
+      <div *ngIf="selectedMethod === 'paypal'" class="payment-button-container">
+        <div id="paypal-button-container"></div>
+      </div>
+    </div>
+
+    <!-- Google Pay Button -->
+    <div class="payment-option">
+      <div class="option-header" (click)="selectMethod('google-pay')">
+        <ion-icon name="logo-google" class="payment-icon google"></ion-icon>
+        <span class="option-label">Google Pay</span>
+        <ion-radio-group [(ngModel)]="selectedMethod">
+          <ion-radio value="google-pay"></ion-radio>
+        </ion-radio-group>
+      </div>
+      <div *ngIf="selectedMethod === 'google-pay'" class="payment-button-container">
+        <div id="google-pay-button-container"></div>
+      </div>
+    </div>
+
+    <!-- Carta di Credito/Debito -->
+    <div class="payment-option">
+      <div class="option-header" (click)="selectMethod('card')">
+        <ion-icon name="card" class="payment-icon card"></ion-icon>
+        <span class="option-label">Carta di Credito/Debito</span>
+        <ion-radio-group [(ngModel)]="selectedMethod">
+          <ion-radio value="card"></ion-radio>
+        </ion-radio-group>
+      </div>
+      <div *ngIf="selectedMethod === 'card'" class="card-form">
+        <p class="info-text">Il pagamento con carta sarà disponibile presso il salone</p>
+        <ion-button expand="block" (click)="confirmCardPayment()">
+          Prenota e Paga al Salone
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Contanti -->
+    <div class="payment-option">
+      <div class="option-header" (click)="selectMethod('cash')">
+        <ion-icon name="cash" class="payment-icon cash"></ion-icon>
+        <span class="option-label">Contanti</span>
+        <ion-radio-group [(ngModel)]="selectedMethod">
+          <ion-radio value="cash"></ion-radio>
+        </ion-radio-group>
+      </div>
+      <div *ngIf="selectedMethod === 'cash'" class="cash-info">
+        <p class="info-text">Pagherai in contanti presso il salone</p>
+        <ion-button expand="block" (click)="confirmCashPayment()">
+          Conferma Prenotazione
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <div class="payment-footer">
+    <p class="security-text">
+      <ion-icon name="shield-checkmark"></ion-icon>
+      Pagamento sicuro e protetto
+    </p>
+  </div>
+</div>

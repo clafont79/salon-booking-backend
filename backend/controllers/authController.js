@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Salon = require('../models/Salon');
 const jwt = require('jsonwebtoken');
 
 // Genera JWT
@@ -13,7 +14,8 @@ const generateToken = (id) => {
 // @access  Public
 exports.register = async (req, res) => {
   try {
-    const { nome, cognome, email, telefono, password, ruolo } = req.body;
+    const { nome, cognome, email, telefono, password, ruolo, tipoUtente, 
+            nomeSalone, indirizzoSalone, cittaSalone, capSalone, tipoSalone } = req.body;
 
     // Verifica se utente esiste già
     const userExists = await User.findOne({ email });
@@ -28,8 +30,31 @@ exports.register = async (req, res) => {
       email,
       telefono,
       password,
-      ruolo: ruolo || 'cliente'
+      ruolo: tipoUtente === 'esercente' ? 'esercente' : (ruolo || 'cliente'),
+      tipoUtente: tipoUtente || 'cliente'
     });
+
+    // Se è un esercente, crea anche il salone
+    if (tipoUtente === 'esercente' && nomeSalone) {
+      const salon = await Salon.create({
+        nome: nomeSalone,
+        indirizzo: indirizzoSalone,
+        citta: cittaSalone,
+        cap: capSalone,
+        telefono: telefono,
+        email: email,
+        proprietarioId: user._id,
+        tipo: tipoSalone || 'parrucchiere',
+        coordinate: {
+          lat: 45.4642, // Coordinate default (Milano) - da aggiornare con geocoding
+          lng: 9.1900
+        }
+      });
+
+      // Aggiorna user con riferimento al salone
+      user.salonId = salon._id;
+      await user.save();
+    }
 
     if (user) {
       res.status(201).json({
@@ -39,10 +64,13 @@ exports.register = async (req, res) => {
         email: user.email,
         telefono: user.telefono,
         ruolo: user.ruolo,
+        tipoUtente: user.tipoUtente,
+        salonId: user.salonId,
         token: generateToken(user._id),
       });
     }
   } catch (error) {
+    console.error('Register error:', error);
     res.status(500).json({ message: 'Errore durante la registrazione', error: error.message });
   }
 };

@@ -1,9 +1,9 @@
 {
   "name": "hairIT",
-  "appId": "com.hairit.app",
+  "appId": "com.salon.booking",
   "webDir": "www",
   "bundledWebRuntime": false,
-  "appName": "hairit-app",
+  "appName": "hairIT",
   "server": {
     "androidScheme": "https",
     "cleartext": true,

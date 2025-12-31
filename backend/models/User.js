@@ -29,8 +29,18 @@ const userSchema = new mongoose.Schema({
   },
   ruolo: {
     type: String,
-    enum: ['cliente', 'admin', 'operatore'],
+    enum: ['cliente', 'admin', 'operatore', 'esercente'],
     default: 'cliente'
+  },
+  tipoUtente: {
+    type: String,
+    enum: ['cliente', 'esercente'],
+    default: 'cliente'
+  },
+  salonId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Salon',
+    default: null
   },
   attivo: {
     type: Boolean,

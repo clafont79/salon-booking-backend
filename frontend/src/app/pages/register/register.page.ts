@@ -23,13 +23,37 @@ export class RegisterPage implements OnInit {
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
+      tipoUtente: ['cliente', Validators.required],
       nome: ['', Validators.required],
       cognome: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       telefono: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
+      // Campi salone (opzionali per esercenti)
+      nomeSalone: [''],
+      indirizzoSalone: [''],
+      cittaSalone: [''],
+      capSalone: [''],
+      tipoSalone: ['parrucchiere']
     }, { validators: this.passwordMatchValidator });
+
+    // Aggiungi validatori dinamici per i campi salone
+    this.registerForm.get('tipoUtente')?.valueChanges.subscribe(value => {
+      const salonFields = ['nomeSalone', 'indirizzoSalone', 'cittaSalone', 'capSalone'];
+      
+      if (value === 'esercente') {
+        salonFields.forEach(field => {
+          this.registerForm.get(field)?.setValidators([Validators.required]);
+          this.registerForm.get(field)?.updateValueAndValidity();
+        });
+      } else {
+        salonFields.forEach(field => {
+          this.registerForm.get(field)?.clearValidators();
+          this.registerForm.get(field)?.updateValueAndValidity();
+        });
+      }
+    });
   }
 
   passwordMatchValidator(g: FormGroup) {

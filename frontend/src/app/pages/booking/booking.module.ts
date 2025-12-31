@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { BookingPageRoutingModule } from './booking-routing.module';
 import { BookingPage } from './booking.page';
 import { SharedModule } from '../../shared/shared.module';
+import { SharedComponentsModule } from '../../components/shared-components.module';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import { SharedModule } from '../../shared/shared.module';
     ReactiveFormsModule,
     IonicModule,
     BookingPageRoutingModule,
-    SharedModule
+    SharedModule,
+    SharedComponentsModule
   ],
   declarations: [BookingPage]
 })
