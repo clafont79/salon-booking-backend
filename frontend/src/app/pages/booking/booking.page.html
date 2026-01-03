@@ -15,6 +15,21 @@
     <ion-card-content>
       <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()">
         
+        <!-- Salon Selection -->
+        <div class="form-group">
+          <div class="input-label">
+            <ion-icon name="business-outline" class="label-icon"></ion-icon>
+            <span>Seleziona il salone</span>
+          </div>
+          <ion-item class="modern-item" lines="none">
+            <ion-select formControlName="salonId" interface="action-sheet" placeholder="Scegli un salone">
+              <ion-select-option *ngFor="let salon of salons" [value]="salon._id">
+                {{ salon.nome }} - {{ salon.citta }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+
         <!-- Operator Selection -->
         <div class="form-group">
           <div class="input-label">

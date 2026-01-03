@@ -8,6 +8,8 @@ import { AppointmentService } from '../../services/appointment.service';
 import { OperatorService } from '../../services/operator.service';
 import { Operator } from '../../models/operator.model';
 import { PaymentModalComponent } from '../../components/payment-modal/payment-modal.component';
+import { PlacesService } from '../../services/places.service';
+import { Place } from '../../models/place.model';
 
 @Component({
   selector: 'app-booking',
@@ -19,6 +21,7 @@ export class BookingPage implements OnInit {
   
   bookingForm!: FormGroup;
   operators: Operator[] = [];
+  salons: Place[] = [];
   availableSlots: string[] = [];
   availableServices: string[] = [];
   selectedDate: string = '';
@@ -40,6 +43,7 @@ export class BookingPage implements OnInit {
     private formBuilder: FormBuilder,
     private appointmentService: AppointmentService,
     private operatorService: OperatorService,
+    private placesService: PlacesService,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private router: Router,
@@ -75,6 +79,7 @@ export class BookingPage implements OnInit {
 
   ngOnInit(): void {
     this.bookingForm = this.formBuilder.group({
+      salonId: [null, Validators.required],
       operatoreId: [null, Validators.required],
       data: [this.minDate, Validators.required],
       slot: [null, Validators.required],
@@ -143,8 +148,21 @@ export class BookingPage implements OnInit {
       }
     }
     
+    this.loadSalons();
     this.loadOperators();
     this.loadServices();
+  }
+
+  loadSalons() {
+    this.placesService.getAllPlaces().subscribe({
+      next: (places) => {
+        this.salons = places;
+        console.log('Saloni caricati:', this.salons.length);
+      },
+      error: (err) => {
+        console.error('Errore caricamento saloni:', err);
+      }
+    });
   }
 
   // Parse transcript and return a patch object (do not apply automatically)
@@ -777,6 +795,7 @@ export class BookingPage implements OnInit {
     await loading.present();
 
     const appointmentData = {
+      salonId: formValue.salonId,
       operatoreId: formValue.operatoreId,
       dataOra: dataOra.toISOString(),
       servizio: formValue.servizio,

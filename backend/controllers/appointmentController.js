@@ -11,7 +11,7 @@ exports.createAppointment = async (req, res) => {
     console.log('Creating appointment with data:', req.body);
     console.log('User from token:', req.user);
     
-    const { operatoreId, dataOra, durata, servizio, note, prezzo } = req.body;
+    const { operatoreId, dataOra, durata, servizio, note, prezzo, salonId } = req.body;
 
     // Verifica disponibilità operatore
     const isAvailable = await checkOperatorAvailability(operatoreId, dataOra, durata);
@@ -23,6 +23,7 @@ exports.createAppointment = async (req, res) => {
     const appointment = await Appointment.create({
       clienteId: req.user._id,
       operatoreId,
+      salonId,
       dataOra,
       durata: durata || 30,
       servizio,
@@ -132,7 +133,7 @@ exports.updateAppointment = async (req, res) => {
       return res.status(403).json({ message: 'Non autorizzato' });
     }
 
-    const { operatoreId, dataOra, durata, servizio, note, stato, prezzo } = req.body;
+    const { operatoreId, dataOra, durata, servizio, note, stato, prezzo, salonId } = req.body;
 
     // Se cambiano data/ora/operatore, verifica disponibilità
     if ((dataOra && dataOra !== appointment.dataOra) || 
@@ -151,6 +152,7 @@ exports.updateAppointment = async (req, res) => {
     }
 
     appointment.operatoreId = operatoreId || appointment.operatoreId;
+    appointment.salonId = salonId || appointment.salonId;
     appointment.dataOra = dataOra || appointment.dataOra;
     appointment.durata = durata || appointment.durata;
     appointment.servizio = servizio || appointment.servizio;
