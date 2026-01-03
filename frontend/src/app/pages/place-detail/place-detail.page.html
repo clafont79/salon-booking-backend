@@ -1,0 +1,134 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="gradient-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Dettagli Salone</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="place-detail-content">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner></ion-spinner>
+    <p>Caricamento...</p>
+  </div>
+
+  <!-- Place Details -->
+  <div *ngIf="!loading && place" class="place-container">
+    
+    <!-- Header Image -->
+    <div class="place-header">
+      <div class="header-gradient"></div>
+      <div class="place-icon-large">
+        <ion-icon [name]="place.tipo === 'barbiere' ? 'cut' : 'scissors'"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Place Info Card -->
+    <div class="info-card">
+      <h1 class="place-name">{{ place.nome }}</h1>
+      <ion-chip [color]="getStatusColor()" class="status-chip">
+        <ion-icon [name]="place.aperto ? 'checkmark-circle' : 'close-circle'"></ion-icon>
+        <ion-label>{{ getStatusText() }}</ion-label>
+      </ion-chip>
+
+      <!-- Rating -->
+      <div class="rating-section" *ngIf="place.valutazione">
+        <div class="stars">
+          <ion-icon name="star" *ngFor="let star of [1,2,3,4,5]" 
+                    [class.filled]="star <= place.valutazione!"></ion-icon>
+        </div>
+        <span class="rating-text">{{ place.valutazione }}/5</span>
+        <span class="reviews-count">({{ place.numeroRecensioni }} recensioni)</span>
+      </div>
+
+      <!-- Description -->
+      <div class="description-section">
+        <h3>Descrizione</h3>
+        <p>
+          {{ place.tipo === 'barbiere' ? 
+            'Barbiere professionale specializzato in tagli classici e moderni. Esperienza pluriennale nel settore con attenzione ai dettagli e cura del cliente.' :
+            place.tipo === 'centro_estetico' ?
+            'Centro estetico moderno con servizi completi di bellezza e benessere. Staff qualificato e prodotti di alta qualità per garantire i migliori risultati.' :
+            'Salone di parrucchieri con personale esperto e qualificato. Utilizziamo prodotti professionali di alta qualità e seguiamo le ultime tendenze del settore.'
+          }}
+        </p>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="contact-section">
+        <h3>Contatti</h3>
+        <div class="contact-item" (click)="callPhone()">
+          <ion-icon name="call-outline"></ion-icon>
+          <div class="contact-info">
+            <span class="label">Telefono</span>
+            <span class="value">{{ place.telefono }}</span>
+          </div>
+        </div>
+
+        <div class="contact-item" (click)="openMaps()">
+          <ion-icon name="location-outline"></ion-icon>
+          <div class="contact-info">
+            <span class="label">Indirizzo</span>
+            <span class="value">{{ place.indirizzo }}, {{ place.citta }} {{ place.cap }}</span>
+          </div>
+        </div>
+
+        <div class="contact-item" *ngIf="place.distanza">
+          <ion-icon name="navigate-outline"></ion-icon>
+          <div class="contact-info">
+            <span class="label">Distanza</span>
+            <span class="value">{{ place.distanza }} km</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Opening Hours -->
+      <div class="hours-section" *ngIf="place.orari">
+        <h3>Orari di apertura</h3>
+        <div class="hours-list">
+          <div class="hour-item" *ngFor="let day of ['lunedi', 'martedi', 'mercoledi', 'giovedi', 'venerdi', 'sabato', 'domenica']">
+            <span class="day">{{ day | titlecase }}</span>
+            <span class="time">{{ getOpeningHours(day) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Services -->
+      <div class="services-section" *ngIf="place.servizi && place.servizi.length > 0">
+        <h3>Servizi disponibili</h3>
+        <div class="services-grid">
+          <ion-button 
+            *ngFor="let service of place.servizi" 
+            expand="block" 
+            fill="outline"
+            class="service-button"
+            (click)="bookService(service)">
+            <ion-icon name="cut-outline" slot="start"></ion-icon>
+            {{ service }}
+          </ion-button>
+        </div>
+      </div>
+
+      <!-- Book Now Button -->
+      <div class="action-buttons">
+        <ion-button expand="block" size="large" class="book-button" (click)="bookService('')">
+          <ion-icon name="calendar" slot="start"></ion-icon>
+          Prenota ora
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && !place" class="error-container">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <h2>Salone non trovato</h2>
+    <p>Non è stato possibile caricare i dettagli del salone.</p>
+    <ion-button (click)="goBack()">Torna indietro</ion-button>
+  </div>
+
+</ion-content>

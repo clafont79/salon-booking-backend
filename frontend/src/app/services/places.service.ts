@@ -279,6 +279,226 @@ export class PlacesService {
         sabato: '9:00-18:00',
         domenica: 'Chiuso'
       }
+    },
+    // Roma
+    {
+      _id: '11',
+      nome: 'Salone Colosseo',
+      indirizzo: 'Via dei Fori Imperiali 85',
+      citta: 'Roma',
+      cap: '00186',
+      telefono: '+39 06 1234567',
+      email: 'info@salonecolosseo.it',
+      tipo: 'parrucchiere',
+      coordinate: {
+        lat: 41.8902,
+        lng: 12.4922
+      },
+      servizi: ['Taglio', 'Colore', 'Piega', 'Trattamenti'],
+      valutazione: 4.6,
+      numeroRecensioni: 189,
+      aperto: true,
+      orari: {
+        lunedi: '9:00-19:00',
+        martedi: '9:00-19:00',
+        mercoledi: '9:00-19:00',
+        giovedi: '9:00-19:00',
+        venerdi: '9:00-20:00',
+        sabato: '9:00-19:00',
+        domenica: 'Chiuso'
+      }
+    },
+    {
+      _id: '12',
+      nome: 'Barbiere di Trastevere',
+      indirizzo: 'Via della Lungaretta 42',
+      citta: 'Roma',
+      cap: '00153',
+      telefono: '+39 06 5551234',
+      email: 'info@barbertrastevere.it',
+      tipo: 'barbiere',
+      coordinate: {
+        lat: 41.8891,
+        lng: 12.4695
+      },
+      servizi: ['Taglio uomo', 'Barba', 'Rasatura', 'Trattamenti'],
+      valutazione: 4.7,
+      numeroRecensioni: 167,
+      aperto: true,
+      orari: {
+        lunedi: '8:30-20:00',
+        martedi: '8:30-20:00',
+        mercoledi: '8:30-20:00',
+        giovedi: '8:30-20:00',
+        venerdi: '8:30-20:30',
+        sabato: '8:30-19:00',
+        domenica: '9:00-14:00'
+      }
+    },
+    // Torino
+    {
+      _id: '13',
+      nome: 'Hair Studio Torino',
+      indirizzo: 'Via Roma 256',
+      citta: 'Torino',
+      cap: '10121',
+      telefono: '+39 011 1234567',
+      email: 'info@hairstudiotorino.it',
+      tipo: 'parrucchiere',
+      coordinate: {
+        lat: 45.0703,
+        lng: 7.6869
+      },
+      servizi: ['Taglio', 'Colore', 'Styling', 'Extension'],
+      valutazione: 4.5,
+      numeroRecensioni: 134,
+      aperto: true,
+      orari: {
+        lunedi: '9:00-19:00',
+        martedi: '9:00-19:00',
+        mercoledi: '9:00-19:00',
+        giovedi: '9:00-19:00',
+        venerdi: '9:00-19:30',
+        sabato: '9:00-18:00',
+        domenica: 'Chiuso'
+      }
+    },
+    {
+      _id: '14',
+      nome: 'Barberia Mole',
+      indirizzo: 'Via Po 18',
+      citta: 'Torino',
+      cap: '10124',
+      telefono: '+39 011 9876543',
+      email: 'info@barberiamole.it',
+      tipo: 'barbiere',
+      coordinate: {
+        lat: 45.0656,
+        lng: 7.6925
+      },
+      servizi: ['Taglio classico', 'Barba', 'Rasatura', 'Trattamenti'],
+      valutazione: 4.8,
+      numeroRecensioni: 198,
+      aperto: true,
+      orari: {
+        lunedi: '8:30-19:30',
+        martedi: '8:30-19:30',
+        mercoledi: '8:30-19:30',
+        giovedi: '8:30-19:30',
+        venerdi: '8:30-20:00',
+        sabato: '8:30-19:00',
+        domenica: 'Chiuso'
+      }
+    },
+    // Firenze
+    {
+      _id: '15',
+      nome: 'Salone Rinascimento',
+      indirizzo: 'Via dei Calzaiuoli 89',
+      citta: 'Firenze',
+      cap: '50122',
+      telefono: '+39 055 1234567',
+      email: 'info@salonerinascimento.it',
+      tipo: 'parrucchiere',
+      coordinate: {
+        lat: 43.7715,
+        lng: 11.2551
+      },
+      servizi: ['Taglio', 'Colore artistico', 'Piega', 'Acconciature'],
+      valutazione: 4.7,
+      numeroRecensioni: 176,
+      aperto: true,
+      orari: {
+        lunedi: '9:00-19:00',
+        martedi: '9:00-19:00',
+        mercoledi: '9:00-19:00',
+        giovedi: '9:00-19:00',
+        venerdi: '9:00-19:30',
+        sabato: '9:00-19:00',
+        domenica: 'Chiuso'
+      }
+    },
+    {
+      _id: '16',
+      nome: 'Barbiere del Duomo',
+      indirizzo: 'Piazza del Duomo 15',
+      citta: 'Firenze',
+      cap: '50122',
+      telefono: '+39 055 5551234',
+      email: 'info@barberduomo.it',
+      tipo: 'barbiere',
+      coordinate: {
+        lat: 43.7731,
+        lng: 11.2560
+      },
+      servizi: ['Taglio', 'Barba', 'Rasatura tradizionale', 'Trattamenti'],
+      valutazione: 4.9,
+      numeroRecensioni: 234,
+      aperto: true,
+      orari: {
+        lunedi: '8:00-20:00',
+        martedi: '8:00-20:00',
+        mercoledi: '8:00-20:00',
+        giovedi: '8:00-20:00',
+        venerdi: '8:00-20:30',
+        sabato: '8:00-19:30',
+        domenica: '9:00-14:00'
+      }
+    },
+    // Bologna
+    {
+      _id: '17',
+      nome: 'Hair Design Bologna',
+      indirizzo: 'Via Indipendenza 12',
+      citta: 'Bologna',
+      cap: '40121',
+      telefono: '+39 051 1234567',
+      email: 'info@hairdesignbo.it',
+      tipo: 'parrucchiere',
+      coordinate: {
+        lat: 44.4949,
+        lng: 11.3426
+      },
+      servizi: ['Taglio', 'Colore', 'Meches', 'Balayage'],
+      valutazione: 4.6,
+      numeroRecensioni: 152,
+      aperto: true,
+      orari: {
+        lunedi: '9:00-19:00',
+        martedi: '9:00-19:00',
+        mercoledi: '9:00-19:00',
+        giovedi: '9:00-19:00',
+        venerdi: '9:00-19:30',
+        sabato: '9:00-18:00',
+        domenica: 'Chiuso'
+      }
+    },
+    {
+      _id: '18',
+      nome: 'Barberia delle Due Torri',
+      indirizzo: 'Piazza Maggiore 8',
+      citta: 'Bologna',
+      cap: '40124',
+      telefono: '+39 051 5551234',
+      email: 'info@barberduetorri.it',
+      tipo: 'barbiere',
+      coordinate: {
+        lat: 44.4938,
+        lng: 11.3387
+      },
+      servizi: ['Taglio uomo', 'Barba', 'Rasatura', 'Hot towel'],
+      valutazione: 4.8,
+      numeroRecensioni: 187,
+      aperto: true,
+      orari: {
+        lunedi: '8:30-19:30',
+        martedi: '8:30-19:30',
+        mercoledi: '8:30-19:30',
+        giovedi: '8:30-19:30',
+        venerdi: '8:30-20:00',
+        sabato: '8:30-19:00',
+        domenica: 'Chiuso'
+      }
     }
   ];
 
@@ -307,9 +527,21 @@ export class PlacesService {
     });
 
     // Filtra per raggio e ordina per distanza
-    const nearbyPlaces = placesWithDistance
+    let nearbyPlaces = placesWithDistance
       .filter(place => place.distanza! <= radius)
       .sort((a, b) => a.distanza! - b.distanza!);
+    
+    // Se non ci sono risultati nel raggio, aumenta il raggio a 50km
+    if (nearbyPlaces.length === 0) {
+      nearbyPlaces = placesWithDistance
+        .filter(place => place.distanza! <= 50)
+        .sort((a, b) => a.distanza! - b.distanza!);
+    }
+    
+    // Se ancora non ci sono risultati, restituisci tutti i luoghi ordinati per distanza
+    if (nearbyPlaces.length === 0) {
+      nearbyPlaces = placesWithDistance.sort((a, b) => a.distanza! - b.distanza!);
+    }
 
     return of(nearbyPlaces);
   }

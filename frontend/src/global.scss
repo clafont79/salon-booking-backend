@@ -24,5 +24,10 @@ ion-toolbar {
   --padding-bottom: env(safe-area-inset-bottom);
 }
 
+// Assicura che l'header abbia uno z-index inferiore al popover delle notifiche
+ion-header {
+  z-index: 10 !important;
+}
+
 // Rimuove la linea separatoria perché ora usiamo il footer nativo
 

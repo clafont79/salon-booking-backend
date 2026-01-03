@@ -46,6 +46,11 @@ const routes: Routes = [
     path: 'places',
     loadChildren: () => import('./pages/places/places.module').then( m => m.PlacesPageModule),
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'place-detail/:id',
+    loadChildren: () => import('./pages/place-detail/place-detail.module').then( m => m.PlaceDetailPageModule),
+    canActivate: [AuthGuard]
   }
 
 ];

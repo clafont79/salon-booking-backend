@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { GeolocationService } from '../../services/geolocation.service';
 import { PlacesService } from '../../services/places.service';
 import { Place } from '../../models/place.model';
@@ -12,7 +12,7 @@ declare var L: any;
   templateUrl: './places.page.html',
   styleUrls: ['./places.page.scss'],
 })
-export class PlacesPage implements OnInit {
+export class PlacesPage implements OnInit, OnDestroy {
   @ViewChild('map', { static: false }) mapElement!: ElementRef;
 
   map: any;
@@ -22,7 +22,7 @@ export class PlacesPage implements OnInit {
   userLocation: { lat: number; lng: number } | null = null;
   markers: any[] = [];
   userMarker: any;
-  viewMode: 'map' | 'list' = 'map';
+  viewMode: 'map' | 'list' = 'map'; // Vista predefinita: mappa
   searchQuery: string = '';
   filterType: string = 'all';
   loading: boolean = false;
@@ -36,6 +36,14 @@ export class PlacesPage implements OnInit {
   async ngOnInit() {
     await this.getCurrentLocation();
     await this.loadPlaces();
+  }
+
+  ngOnDestroy() {
+    // Pulisci la mappa quando si esce dalla pagina
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
   }
 
   async ionViewDidEnter() {
@@ -55,6 +63,15 @@ export class PlacesPage implements OnInit {
           lng: position.longitude
         };
         this.userLocation = this.currentPosition;
+        console.log('Posizione ottenuta:', this.currentPosition);
+      } else {
+        // Se la geolocalizzazione restituisce null, usa posizione di default
+        console.warn('Geolocalizzazione non disponibile, uso posizione di default');
+        this.currentPosition = {
+          lat: 45.4642,
+          lng: 9.1900
+        };
+        this.userLocation = this.currentPosition;
       }
     } catch (error) {
       console.error('Errore geolocalizzazione:', error);
@@ -69,6 +86,7 @@ export class PlacesPage implements OnInit {
 
   async loadPlaces() {
     this.loading = true;
+    console.log('Inizio caricamento luoghi...');
     
     // Assicurati che ci sia una posizione
     if (!this.currentPosition) {
@@ -76,12 +94,14 @@ export class PlacesPage implements OnInit {
     }
     
     if (this.currentPosition) {
+      console.log('Carico luoghi vicini a:', this.currentPosition);
       this.placesService.getNearbyPlaces(
         this.currentPosition.lat,
         this.currentPosition.lng,
         10
       ).subscribe({
         next: (places) => {
+          console.log('Luoghi caricati:', places.length, places);
           this.places = places;
           this.filteredPlaces = places;
           this.loading = false;
@@ -102,35 +122,62 @@ export class PlacesPage implements OnInit {
   }
 
   initMap() {
-    if (!this.mapElement || !this.currentPosition) return;
-
-    // Crea mappa Leaflet con OpenStreetMap (gratuito!)
-    this.map = L.map(this.mapElement.nativeElement, {
-      zoomControl: false // Usiamo controlli personalizzati
-    }).setView([this.currentPosition.lat, this.currentPosition.lng], 14);
-
-    // Aggiungi tiles OpenStreetMap - completamente gratuito, nessuna partita IVA richiesta
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
-    }).addTo(this.map);
-
-    // Marker posizione corrente
-    if (this.currentPosition) {
-      const userIcon = L.divIcon({
-        className: 'user-location-marker',
-        html: '<div style="background: #4285F4; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>',
-        iconSize: [20, 20],
-        iconAnchor: [10, 10]
-      });
-      
-      this.userMarker = L.marker(
-        [this.currentPosition.lat, this.currentPosition.lng],
-        { icon: userIcon, title: 'La tua posizione' }
-      ).addTo(this.map);
+    // Se la mappa esiste già, non reinizializzarla
+    if (this.map) {
+      console.log('Mappa già esistente');
+      this.map.invalidateSize();
+      return;
     }
 
-    this.addMarkersToMap();
+    if (!this.mapElement || !this.currentPosition) {
+      console.error('Impossibile inizializzare la mappa:', {
+        hasMapElement: !!this.mapElement,
+        hasCurrentPosition: !!this.currentPosition
+      });
+      return;
+    }
+
+    // Verifica che Leaflet sia caricato
+    if (typeof L === 'undefined') {
+      console.error('Leaflet non è caricato! Riprovo tra 500ms...');
+      setTimeout(() => this.initMap(), 500);
+      return;
+    }
+
+    console.log('Inizializzo la mappa con posizione:', this.currentPosition);
+
+    try {
+      // Crea mappa Leaflet con OpenStreetMap (gratuito!)
+      this.map = L.map(this.mapElement.nativeElement, {
+        zoomControl: false // Usiamo controlli personalizzati
+      }).setView([this.currentPosition.lat, this.currentPosition.lng], 13);
+
+      // Aggiungi tiles OpenStreetMap - completamente gratuito, nessuna partita IVA richiesta
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+      }).addTo(this.map);
+
+      // Marker posizione corrente
+      if (this.currentPosition) {
+        const userIcon = L.divIcon({
+          className: 'user-location-marker',
+          html: '<div style="background: #4285F4; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>',
+          iconSize: [20, 20],
+          iconAnchor: [10, 10]
+        });
+        
+        this.userMarker = L.marker(
+          [this.currentPosition.lat, this.currentPosition.lng],
+          { icon: userIcon, title: 'La tua posizione' }
+        ).addTo(this.map);
+      }
+
+      this.addMarkersToMap();
+      console.log('Mappa inizializzata con successo');
+    } catch (error) {
+      console.error('Errore durante l\'inizializzazione della mappa:', error);
+    }
   }
 
   addMarkersToMap() {
@@ -241,10 +288,20 @@ export class PlacesPage implements OnInit {
 
   toggleView() {
     this.viewMode = this.viewMode === 'map' ? 'list' : 'map';
-    if (this.viewMode === 'map' && !this.map) {
+    console.log('Vista cambiata a:', this.viewMode);
+    
+    if (this.viewMode === 'map') {
+      // Aspetta che il DOM sia aggiornato
       setTimeout(() => {
-        this.initMap();
-      }, 100);
+        if (!this.map) {
+          console.log('Inizializzazione mappa...');
+          this.initMap();
+        } else {
+          // Se la mappa esiste già, invalida la dimensione
+          console.log('Mappa già esistente, invalido dimensione');
+          this.map.invalidateSize();
+        }
+      }, 300);
     }
   }
 
@@ -265,22 +322,23 @@ export class PlacesPage implements OnInit {
   }
 
   filterByType(type: string) {
+    console.log('Filtro per tipo:', type, 'Totale places:', this.places.length);
     this.filterType = type;
     if (type === 'all') {
       this.filteredPlaces = this.places;
     } else {
       this.filteredPlaces = this.places.filter(place => place.tipo === type);
     }
+    console.log('Luoghi filtrati:', this.filteredPlaces.length, this.filteredPlaces);
     if (this.map) {
       this.addMarkersToMap();
     }
   }
 
   selectPlace(place: Place) {
-    // Naviga ai dettagli o prenota
+    // Naviga ai dettagli del salone
     console.log('Luogo selezionato:', place);
-    // Potresti navigare a una pagina di dettaglio o prenotazione
-    // this.router.navigate(['/place-detail', place._id]);
+    this.router.navigate(['/place-detail', place._id]);
   }
 
   goToHome() {

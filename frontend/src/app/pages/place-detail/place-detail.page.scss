@@ -1,0 +1,272 @@
+.gradient-toolbar {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --color: white;
+}
+
+.place-detail-content {
+  --background: #f7fafc;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+  
+  p {
+    color: #718096;
+  }
+}
+
+.place-container {
+  padding-bottom: 24px;
+}
+
+.place-header {
+  position: relative;
+  height: 200px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  .header-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  }
+  
+  .place-icon-large {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    
+    ion-icon {
+      font-size: 48px;
+      color: #667eea;
+    }
+  }
+}
+
+.info-card {
+  margin: -30px 16px 0;
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.place-name {
+  margin: 0 0 12px 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #2d3748;
+}
+
+.status-chip {
+  margin-bottom: 16px;
+  font-weight: 600;
+  
+  ion-icon {
+    margin-right: 4px;
+  }
+}
+
+.rating-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  
+  .stars {
+    display: flex;
+    gap: 2px;
+    
+    ion-icon {
+      font-size: 20px;
+      color: #cbd5e0;
+      
+      &.filled {
+        color: #f6ad55;
+      }
+    }
+  }
+  
+  .rating-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+  
+  .reviews-count {
+    font-size: 14px;
+    color: #718096;
+  }
+}
+
+.description-section,
+.contact-section,
+.hours-section,
+.services-section {
+  margin-bottom: 24px;
+  
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #4a5568;
+  }
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding: 12px 8px;
+  
+  &:hover {
+    background: #f7fafc;
+  }
+  
+  ion-icon {
+    font-size: 24px;
+    color: #667eea;
+    flex-shrink: 0;
+  }
+  
+  .contact-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    
+    .label {
+      font-size: 12px;
+      color: #718096;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    
+    .value {
+      font-size: 15px;
+      color: #2d3748;
+    }
+  }
+}
+
+.hours-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hour-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  
+  .day {
+    font-size: 14px;
+    color: #4a5568;
+    font-weight: 500;
+    text-transform: capitalize;
+  }
+  
+  .time {
+    font-size: 14px;
+    color: #2d3748;
+    font-weight: 600;
+  }
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.service-button {
+  --border-color: #667eea;
+  --color: #667eea;
+  font-weight: 500;
+  text-transform: none;
+  
+  &:hover {
+    --background: #667eea;
+    --color: white;
+  }
+}
+
+.action-buttons {
+  margin-top: 32px;
+}
+
+.book-button {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --border-radius: 12px;
+  height: 56px;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: none;
+  
+  ion-icon {
+    margin-right: 8px;
+  }
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 32px;
+  text-align: center;
+  
+  ion-icon {
+    font-size: 64px;
+    color: #fc8181;
+    margin-bottom: 16px;
+  }
+  
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d3748;
+  }
+  
+  p {
+    margin: 0 0 24px 0;
+    color: #718096;
+  }
+}

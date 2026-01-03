@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { PopoverController } from '@ionic/angular';
 import { NotificationService, Notification } from '../../services/notification.service';
 import { Router } from '@angular/router';
@@ -20,6 +20,15 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     private popoverController: PopoverController,
     private router: Router
   ) {}
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    const target = event.target as HTMLElement;
+    const clickedInside = target.closest('.notification-bell-wrapper');
+    if (!clickedInside && this.showPopover) {
+      this.closePopover();
+    }
+  }
 
   ngOnInit() {
     // Sottoscrivi al contatore

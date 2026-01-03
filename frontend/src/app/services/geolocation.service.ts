@@ -43,35 +43,74 @@ export class GeolocationService {
 
   /**
    * Ottiene la posizione corrente dell'utente
+   * Prima prova con Capacitor, poi fallback su browser API
    */
   async getCurrentPosition(): Promise<LocationCoordinates | null> {
     try {
-      // Verifica i permessi
-      const hasPermission = await this.checkPermissions();
-      if (!hasPermission) {
-        const granted = await this.requestPermissions();
-        if (!granted) {
-          throw new Error('Permessi di geolocalizzazione negati');
+      // Prima prova con Capacitor (per mobile)
+      try {
+        const hasPermission = await this.checkPermissions();
+        if (!hasPermission) {
+          const granted = await this.requestPermissions();
+          if (!granted) {
+            throw new Error('Permessi di geolocalizzazione negati');
+          }
         }
+
+        const position: Position = await Geolocation.getCurrentPosition({
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        });
+
+        console.log('Posizione ottenuta da Capacitor:', position.coords);
+        return {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          timestamp: position.timestamp
+        };
+      } catch (capacitorError) {
+        console.log('Capacitor Geolocation non disponibile, uso browser API:', capacitorError);
+        
+        // Fallback su browser geolocation API
+        if ('geolocation' in navigator) {
+          return await this.getBrowserPosition();
+        }
+        throw new Error('Geolocalizzazione non disponibile');
       }
-
-      // Ottiene la posizione
-      const position: Position = await Geolocation.getCurrentPosition({
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      });
-
-      return {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        accuracy: position.coords.accuracy,
-        timestamp: position.timestamp
-      };
     } catch (error) {
       console.error('Errore nell\'ottenere la posizione:', error);
       return null;
     }
+  }
+
+  /**
+   * Ottiene la posizione usando l'API del browser
+   */
+  private getBrowserPosition(): Promise<LocationCoordinates | null> {
+    return new Promise((resolve) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          console.log('Posizione ottenuta dal browser:', position.coords);
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+            timestamp: position.timestamp
+          });
+        },
+        (error) => {
+          console.error('Errore geolocalizzazione browser:', error);
+          resolve(null);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
+    });
   }
 
   /**
