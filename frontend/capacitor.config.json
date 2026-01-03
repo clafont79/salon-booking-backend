@@ -8,7 +8,9 @@
     "androidScheme": "https",
     "cleartext": true,
     "allowNavigation": [
-      "salon-booking-backend-1w3a.onrender.com"
+      "salon-booking-backend-1w3a.onrender.com",
+      "*.tile.openstreetmap.org",
+      "unpkg.com"
     ]
   },
   "plugins": {
