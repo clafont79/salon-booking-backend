@@ -19,6 +19,7 @@
     "module": "ES2022",
     "lib": ["ES2022", "dom"],
     "useDefineForClassFields": false,
+    "allowSyntheticDefaultImports": true,
     "paths": {
       "@app/*": ["src/app/*"],
       "@env/*": ["src/environments/*"]

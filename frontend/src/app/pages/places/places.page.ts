@@ -3,9 +3,7 @@ import { GeolocationService } from '../../services/geolocation.service';
 import { PlacesService } from '../../services/places.service';
 import { Place } from '../../models/place.model';
 import { Router } from '@angular/router';
-
-// Leaflet - libreria gratuita open source, nessuna API key necessaria!
-declare var L: any;
+import * as maplibregl from 'maplibre-gl';
 
 @Component({
   selector: 'app-places',
@@ -15,14 +13,14 @@ declare var L: any;
 export class PlacesPage implements OnInit, OnDestroy {
   @ViewChild('map', { static: false }) mapElement!: ElementRef;
 
-  map: any;
+  map: maplibregl.Map | null = null;
   places: Place[] = [];
   filteredPlaces: Place[] = [];
   currentPosition: { lat: number; lng: number } | null = null;
   userLocation: { lat: number; lng: number } | null = null;
-  markers: any[] = [];
-  userMarker: any;
-  viewMode: 'map' | 'list' = 'map'; // Vista predefinita: mappa
+  markers: maplibregl.Marker[] = [];
+  userMarker: maplibregl.Marker | null = null;
+  viewMode: 'map' | 'list' = 'map';
   searchQuery: string = '';
   filterType: string = 'all';
   loading: boolean = false;
@@ -56,6 +54,7 @@ export class PlacesPage implements OnInit, OnDestroy {
 
   async getCurrentLocation() {
     try {
+      console.log('Richiesta posizione corrente...');
       const position = await this.geolocationService.getCurrentPosition();
       if (position) {
         this.currentPosition = {
@@ -65,8 +64,14 @@ export class PlacesPage implements OnInit, OnDestroy {
         this.userLocation = this.currentPosition;
         console.log('Posizione ottenuta:', this.currentPosition);
       } else {
-        // Se la geolocalizzazione restituisce null, usa posizione di default
-        console.warn('Geolocalizzazione non disponibile, uso posizione di default');
+        // Se la geolocalizzazione restituisce null, chiedi i permessi esplicitamente
+        console.warn('Geolocalizzazione ha restituito null, verifico permessi...');
+        const hasPermission = await this.geolocationService.requestPermissions();
+        if (!hasPermission) {
+          console.warn('Permessi negati, uso posizione di default Milano');
+          this.showLocationPermissionAlert();
+        }
+        // Usa posizione di default
         this.currentPosition = {
           lat: 45.4642,
           lng: 9.1900
@@ -75,6 +80,8 @@ export class PlacesPage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Errore geolocalizzazione:', error);
+      // Mostra alert all'utente
+      this.showLocationPermissionAlert();
       // Posizione di default (Milano centro)
       this.currentPosition = {
         lat: 45.4642,
@@ -82,6 +89,11 @@ export class PlacesPage implements OnInit, OnDestroy {
       };
       this.userLocation = this.currentPosition;
     }
+  }
+
+  async showLocationPermissionAlert() {
+    // Implementa un alert per informare l'utente
+    console.warn('⚠️ Abilita i permessi di geolocalizzazione per vedere i saloni vicini a te!');
   }
 
   async loadPlaces() {
@@ -125,7 +137,7 @@ export class PlacesPage implements OnInit, OnDestroy {
     // Se la mappa esiste già, non reinizializzarla
     if (this.map) {
       console.log('Mappa già esistente');
-      this.map.invalidateSize();
+      this.map.resize();
       return;
     }
 
@@ -137,44 +149,54 @@ export class PlacesPage implements OnInit, OnDestroy {
       return;
     }
 
-    // Verifica che Leaflet sia caricato
-    if (typeof L === 'undefined') {
-      console.error('Leaflet non è caricato! Riprovo tra 500ms...');
-      setTimeout(() => this.initMap(), 500);
-      return;
-    }
-
     console.log('Inizializzo la mappa con posizione:', this.currentPosition);
 
     try {
-      // Crea mappa Leaflet con OpenStreetMap (gratuito!)
-      this.map = L.map(this.mapElement.nativeElement, {
-        zoomControl: false // Usiamo controlli personalizzati
-      }).setView([this.currentPosition.lat, this.currentPosition.lng], 13);
+      // Crea mappa MapLibre con OpenStreetMap (gratuito!)
+      this.map = new maplibregl.Map({
+        container: this.mapElement.nativeElement,
+        style: {
+          version: 8,
+          sources: {
+            'osm': {
+              type: 'raster',
+              tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+              tileSize: 256,
+              attribution: '© OpenStreetMap contributors'
+            }
+          },
+          layers: [{
+            id: 'osm',
+            type: 'raster',
+            source: 'osm'
+          }]
+        },
+        center: [this.currentPosition.lng, this.currentPosition.lat],
+        zoom: 13
+      });
 
-      // Aggiungi tiles OpenStreetMap - completamente gratuito, nessuna partita IVA richiesta
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
-      }).addTo(this.map);
+      // Aggiungi controlli di navigazione
+      this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
       // Marker posizione corrente
       if (this.currentPosition) {
-        const userIcon = L.divIcon({
-          className: 'user-location-marker',
-          html: '<div style="background: #4285F4; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>',
-          iconSize: [20, 20],
-          iconAnchor: [10, 10]
-        });
+        const el = document.createElement('div');
+        el.className = 'user-location-marker';
+        el.style.width = '20px';
+        el.style.height = '20px';
+        el.innerHTML = '<div style="background: #4285F4; width: 14px; height: 14px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.4);"></div>';
         
-        this.userMarker = L.marker(
-          [this.currentPosition.lat, this.currentPosition.lng],
-          { icon: userIcon, title: 'La tua posizione' }
-        ).addTo(this.map);
+        this.userMarker = new maplibregl.Marker({ element: el })
+          .setLngLat([this.currentPosition.lng, this.currentPosition.lat])
+          .addTo(this.map);
       }
 
-      this.addMarkersToMap();
-      console.log('Mappa inizializzata con successo');
+      // Aspetta che la mappa sia caricata prima di aggiungere i marker
+      this.map.on('load', () => {
+        this.addMarkersToMap();
+      });
+
+      console.log('Mappa MapLibre inizializzata con successo');
     } catch (error) {
       console.error('Errore durante l\'inizializzazione della mappa:', error);
     }
@@ -184,64 +206,51 @@ export class PlacesPage implements OnInit, OnDestroy {
     if (!this.map) return;
 
     // Rimuovi marker esistenti
-    this.markers.forEach(marker => this.map.removeLayer(marker));
+    this.markers.forEach(marker => marker.remove());
     this.markers = [];
 
-    // Aggiungi nuovi marker
+    // Aggiungi nuovi marker per i POI
     this.filteredPlaces.forEach(place => {
-      const markerIcon = L.divIcon({
-        className: 'custom-place-marker',
-        html: `
-          <div style="
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-          ">✂️</div>
-        `,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18]
-      });
+      const el = document.createElement('div');
+      el.className = 'custom-place-marker';
+      el.innerHTML = `
+        <div style="
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: 3px solid white;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          cursor: pointer;
+        ">✂️</div>
+      `;
 
-      const marker = L.marker(
-        [place.coordinate.lat, place.coordinate.lng],
-        { icon: markerIcon, title: place.nome }
-      ).addTo(this.map);
-
-      // Popup con info
-      const popupContent = this.getInfoWindowContent(place);
-      marker.bindPopup(popupContent);
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat([place.coordinate.lng, place.coordinate.lat])
+        .setPopup(
+          new maplibregl.Popup({ offset: 25 })
+            .setHTML(this.getInfoWindowContent(place))
+        )
+        .addTo(this.map!);
 
       this.markers.push(marker);
     });
 
     // Adatta vista per mostrare tutti i marker
     if (this.filteredPlaces.length > 0) {
-      const bounds = L.latLngBounds([]);
+      const bounds = new maplibregl.LngLatBounds();
       this.filteredPlaces.forEach(place => {
-        bounds.extend([place.coordinate.lat, place.coordinate.lng]);
+        bounds.extend([place.coordinate.lng, place.coordinate.lat]);
       });
       if (this.currentPosition) {
-        bounds.extend([this.currentPosition.lat, this.currentPosition.lng]);
+        bounds.extend([this.currentPosition.lng, this.currentPosition.lat]);
       }
-      this.map.fitBounds(bounds, { padding: [50, 50] });
+      this.map!.fitBounds(bounds, { padding: 50 });
     }
-  }
-
-  getMarkerIcon(type: string): string {
-    // Puoi usare icone personalizzate qui
-    return `data:image/svg+xml;base64,${btoa(`
-      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-        <circle cx="20" cy="20" r="18" fill="#667eea" stroke="#ffffff" stroke-width="2"/>
-        <text x="20" y="26" font-size="20" text-anchor="middle" fill="#ffffff">✂️</text>
-      </svg>
-    `)}`;
   }
 
   getInfoWindowContent(place: Place): string {
@@ -270,7 +279,11 @@ export class PlacesPage implements OnInit, OnDestroy {
 
   centerOnCurrentPosition() {
     if (this.map && this.userLocation) {
-      this.map.setView([this.userLocation.lat, this.userLocation.lng], 15);
+      this.map.flyTo({
+        center: [this.userLocation.lng, this.userLocation.lat],
+        zoom: 15,
+        duration: 1000
+      });
     }
   }
 
@@ -297,9 +310,9 @@ export class PlacesPage implements OnInit, OnDestroy {
           console.log('Inizializzazione mappa...');
           this.initMap();
         } else {
-          // Se la mappa esiste già, invalida la dimensione
-          console.log('Mappa già esistente, invalido dimensione');
-          this.map.invalidateSize();
+          // Se la mappa esiste già, ridimensiona
+          console.log('Mappa già esistente, ridimensiono');
+          this.map.resize();
         }
       }, 300);
     }

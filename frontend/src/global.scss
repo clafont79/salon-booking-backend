@@ -14,6 +14,9 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
+/* MapLibre GL CSS */
+@import 'maplibre-gl/dist/maplibre-gl.css';
+
 // Safe area inset for Android navigation buttons and iOS notch
 ion-content {
   --padding-bottom: 0px !important;

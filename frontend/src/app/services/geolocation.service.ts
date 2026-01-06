@@ -59,8 +59,8 @@ export class GeolocationService {
 
         const position: Position = await Geolocation.getCurrentPosition({
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
+          timeout: 20000,
+          maximumAge: 5000
         });
 
         console.log('Posizione ottenuta da Capacitor:', position.coords);
@@ -106,8 +106,8 @@ export class GeolocationService {
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0
+          timeout: 20000,
+          maximumAge: 5000
         }
       );
     });
