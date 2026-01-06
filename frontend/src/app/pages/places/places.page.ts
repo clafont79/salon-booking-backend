@@ -24,22 +24,27 @@ export class PlacesPage implements OnInit, OnDestroy {
   searchQuery: string = '';
   filterType: string = 'all';
   loading: boolean = false;
+  
+  private bookPlaceListener: EventListener;
 
   constructor(
     private geolocationService: GeolocationService,
     private placesService: PlacesService,
     private router: Router
-  ) {}
+  ) {
+    // Bind del listener per poterlo rimuovere correttamente
+    this.bookPlaceListener = ((event: CustomEvent) => {
+      const salonId = event.detail;
+      this.navigateToBooking(salonId);
+    }) as EventListener;
+  }
 
   async ngOnInit() {
     await this.getCurrentLocation();
     await this.loadPlaces();
     
     // Ascolta l'evento bookPlace dalla mappa
-    window.addEventListener('bookPlace', ((event: CustomEvent) => {
-      const salonId = event.detail;
-      this.navigateToBooking(salonId);
-    }) as EventListener);
+    window.addEventListener('bookPlace', this.bookPlaceListener);
   }
 
   ngOnDestroy() {
@@ -49,7 +54,7 @@ export class PlacesPage implements OnInit, OnDestroy {
       this.map = null;
     }
     // Rimuovi listener
-    window.removeEventListener('bookPlace', this.navigateToBooking);
+    window.removeEventListener('bookPlace', this.bookPlaceListener);
   }
 
   async ionViewDidEnter() {

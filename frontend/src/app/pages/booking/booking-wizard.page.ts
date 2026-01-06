@@ -208,15 +208,14 @@ export class BookingWizardPage implements OnInit {
     await loading.present();
 
     const bookingData = {
-      salonId: this.selectedSalon._id,
-      operatoreId: this.selectedOperator._id,
-      data: this.selectedDate,
-      slot: this.selectedSlot,
+      operatoreId: this.selectedOperator._id!,
+      dataOra: `${this.selectedDate}T${this.selectedSlot}:00`,
       servizio: this.selectedService,
-      note: this.notes
+      note: this.notes || '',
+      durata: 30
     };
 
-    this.appointmentService.book(bookingData).subscribe({
+    this.appointmentService.create(bookingData).subscribe({
       next: async () => {
         await loading.dismiss();
         await this.showSuccessAlert();

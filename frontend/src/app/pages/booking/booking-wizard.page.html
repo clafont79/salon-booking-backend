@@ -43,9 +43,9 @@
         <ion-card *ngFor="let salon of salons" (click)="selectSalon(salon)" class="salon-card">
           <div class="salon-image">
             <img [src]="salon.immagine || 'assets/img/salon-placeholder.jpg'" alt="{{ salon.nome }}">
-            <div class="salon-rating" *ngIf="salon.rating">
+            <div class="salon-rating" *ngIf="salon.valutazione">
               <ion-icon name="star"></ion-icon>
-              <span>{{ salon.rating }}</span>
+              <span>{{ salon.valutazione }}</span>
             </div>
           </div>
           <ion-card-content>
@@ -54,9 +54,9 @@
               <ion-icon name="location"></ion-icon>
               {{ salon.indirizzo }}
             </p>
-            <p class="salon-distance" *ngIf="salon.distance">
+            <p class="salon-distance" *ngIf="salon.distanza">
               <ion-icon name="walk"></ion-icon>
-              {{ salon.distance }} km
+              {{ salon.distanza }} km
             </p>
           </ion-card-content>
         </ion-card>
@@ -114,13 +114,13 @@
       <div class="operators-grid" *ngIf="!loading && operators.length > 0">
         <ion-card *ngFor="let operator of operators" (click)="selectOperator(operator)" class="operator-card">
           <div class="operator-image">
-            <img [src]="operator.foto || 'assets/img/operator-placeholder.jpg'" alt="{{ operator.nome }} {{ operator.cognome }}">
+            <img src="assets/img/operator-placeholder.jpg" alt="{{ operator.userId?.nome }} {{ operator.userId?.cognome }}">
           </div>
           <ion-card-content>
-            <h3>{{ operator.nome }} {{ operator.cognome }}</h3>
-            <p class="operator-specialty" *ngIf="operator.specializzazione">
+            <h3>{{ operator.userId?.nome }} {{ operator.userId?.cognome }}</h3>
+            <p class="operator-specialty" *ngIf="operator.specializzazioni?.length">
               <ion-icon name="star"></ion-icon>
-              {{ operator.specializzazione }}
+              {{ operator.specializzazioni[0] }}
             </p>
           </ion-card-content>
         </ion-card>
@@ -153,7 +153,7 @@
         </div>
         <div class="recap-item">
           <ion-icon name="person" color="primary"></ion-icon>
-          <span>{{ selectedOperator?.nome }} {{ selectedOperator?.cognome }}</span>
+          <span>{{ selectedOperator?.userId?.nome }} {{ selectedOperator?.userId?.cognome }}</span>
         </div>
       </div>
 
@@ -211,7 +211,7 @@
               <ion-icon name="person" color="primary"></ion-icon>
               <span>Operatore</span>
             </div>
-            <div class="summary-value">{{ selectedOperator?.nome }} {{ selectedOperator?.cognome }}</div>
+            <div class="summary-value">{{ selectedOperator?.userId?.nome }} {{ selectedOperator?.userId?.cognome }}</div>
           </div>
 
           <div class="summary-row">
