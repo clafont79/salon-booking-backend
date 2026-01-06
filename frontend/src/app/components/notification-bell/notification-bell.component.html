@@ -3,9 +3,11 @@
     <ion-icon name="notifications-outline" slot="icon-only"></ion-icon>
     <ion-badge *ngIf="unreadCount > 0" class="notification-badge">{{ unreadCount > 99 ? '99+' : unreadCount }}</ion-badge>
   </ion-button>
+</div>
 
-  <!-- Popover notifiche -->
-  <div class="notification-popover" *ngIf="showPopover" (click)="$event.stopPropagation()">
+<!-- Popover notifiche - FUORI dal wrapper per essere in primo piano -->
+<div class="notification-popover-overlay" *ngIf="showPopover" (click)="closePopover()">
+  <div class="notification-popover" (click)="$event.stopPropagation()">
     <div class="popover-header">
       <h3>Notifiche</h3>
       <div class="header-actions">

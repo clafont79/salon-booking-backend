@@ -56,31 +56,45 @@ export class PlacesPage implements OnInit, OnDestroy {
     try {
       console.log('Richiesta posizione corrente...');
       const position = await this.geolocationService.getCurrentPosition();
-      if (position) {
+      if (position && position.latitude && position.longitude) {
         this.currentPosition = {
           lat: position.latitude,
           lng: position.longitude
         };
         this.userLocation = this.currentPosition;
-        console.log('Posizione ottenuta:', this.currentPosition);
-      } else {
-        // Se la geolocalizzazione restituisce null, chiedi i permessi esplicitamente
-        console.warn('Geolocalizzazione ha restituito null, verifico permessi...');
-        const hasPermission = await this.geolocationService.requestPermissions();
-        if (!hasPermission) {
-          console.warn('Permessi negati, uso posizione di default Milano');
-          this.showLocationPermissionAlert();
-        }
-        // Usa posizione di default
-        this.currentPosition = {
-          lat: 45.4642,
-          lng: 9.1900
-        };
-        this.userLocation = this.currentPosition;
+        console.log('✅ Posizione ottenuta:', this.currentPosition);
+        return; // Uscita anticipata se la posizione è valida
       }
+      
+      // Se arriviamo qui, la geolocalizzazione ha fallito
+      console.warn('⚠️ Geolocalizzazione ha restituito null, richiedo permessi...');
+      const hasPermission = await this.geolocationService.requestPermissions();
+      
+      if (hasPermission) {
+        // Riprova a ottenere la posizione
+        const retryPosition = await this.geolocationService.getCurrentPosition();
+        if (retryPosition && retryPosition.latitude && retryPosition.longitude) {
+          this.currentPosition = {
+            lat: retryPosition.latitude,
+            lng: retryPosition.longitude
+          };
+          this.userLocation = this.currentPosition;
+          console.log('✅ Posizione ottenuta al secondo tentativo:', this.currentPosition);
+          return;
+        }
+      }
+      
+      // Usa posizione di default solo come ultima risorsa
+      console.warn('❌ Impossibile ottenere posizione, uso default Milano');
+      this.showLocationPermissionAlert();
+      this.currentPosition = {
+        lat: 45.4642,
+        lng: 9.1900
+      };
+      this.userLocation = this.currentPosition;
+      
     } catch (error) {
-      console.error('Errore geolocalizzazione:', error);
-      // Mostra alert all'utente
+      console.error('❌ Errore geolocalizzazione:', error);
       this.showLocationPermissionAlert();
       // Posizione di default (Milano centro)
       this.currentPosition = {
@@ -152,27 +166,36 @@ export class PlacesPage implements OnInit, OnDestroy {
     console.log('Inizializzo la mappa con posizione:', this.currentPosition);
 
     try {
-      // Crea mappa MapLibre con OpenStreetMap (gratuito!)
+      // Crea mappa MapLibre con stile simile a Google Maps (Carto Positron - pulito e moderno)
       this.map = new maplibregl.Map({
         container: this.mapElement.nativeElement,
         style: {
           version: 8,
           sources: {
-            'osm': {
+            'carto-light': {
               type: 'raster',
-              tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+              tiles: [
+                'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+                'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+                'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+              ],
               tileSize: 256,
-              attribution: '© OpenStreetMap contributors'
+              attribution: '© OpenStreetMap contributors, © CARTO'
             }
           },
           layers: [{
-            id: 'osm',
+            id: 'carto-light-layer',
             type: 'raster',
-            source: 'osm'
-          }]
+            source: 'carto-light',
+            minzoom: 0,
+            maxzoom: 22
+          }],
+          glyphs: 'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf'
         },
         center: [this.currentPosition.lng, this.currentPosition.lat],
-        zoom: 13
+        zoom: 14,
+        pitch: 0,
+        bearing: 0
       });
 
       // Aggiungi controlli di navigazione
