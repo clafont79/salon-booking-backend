@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { BookingPageRoutingModule } from './booking-routing.module';
 import { BookingPage } from './booking.page';
+import { BookingWizardPage } from './booking-wizard.page';
 import { SharedModule } from '../../shared/shared.module';
 import { SharedComponentsModule } from '../../components/shared-components.module';
 
@@ -17,6 +18,6 @@ import { SharedComponentsModule } from '../../components/shared-components.modul
     SharedModule,
     SharedComponentsModule
   ],
-  declarations: [BookingPage]
+  declarations: [BookingPage, BookingWizardPage]
 })
 export class BookingPageModule {}

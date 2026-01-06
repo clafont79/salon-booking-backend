@@ -1,0 +1,252 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="prevStep()" *ngIf="currentStep > 1">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+      <ion-button (click)="goBack()" *ngIf="currentStep === 1">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ steps[currentStep - 1].title }}</ion-title>
+  </ion-toolbar>
+  
+  <!-- Progress bar -->
+  <div class="progress-container">
+    <div class="progress-bar" [style.width.%]="(currentStep / totalSteps) * 100"></div>
+  </div>
+  
+  <!-- Steps indicator -->
+  <div class="steps-indicator">
+    <div *ngFor="let step of steps" class="step-item" [class.active]="step.number === currentStep" [class.completed]="step.number < currentStep">
+      <div class="step-number">
+        <ion-icon *ngIf="step.number < currentStep" name="checkmark"></ion-icon>
+        <span *ngIf="step.number >= currentStep">{{ step.number }}</span>
+      </div>
+      <div class="step-label">{{ step.title }}</div>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content>
+  <div class="wizard-content">
+    
+    <!-- STEP 1: Seleziona Salone -->
+    <div *ngIf="currentStep === 1" class="step-container fade-in">
+      <div class="step-header">
+        <ion-icon name="storefront" class="step-icon"></ion-icon>
+        <h2>Scegli il tuo salone</h2>
+        <p>Seleziona il salone dove vuoi prenotare</p>
+      </div>
+
+      <div class="salons-grid" *ngIf="!loading">
+        <ion-card *ngFor="let salon of salons" (click)="selectSalon(salon)" class="salon-card">
+          <div class="salon-image">
+            <img [src]="salon.immagine || 'assets/img/salon-placeholder.jpg'" alt="{{ salon.nome }}">
+            <div class="salon-rating" *ngIf="salon.rating">
+              <ion-icon name="star"></ion-icon>
+              <span>{{ salon.rating }}</span>
+            </div>
+          </div>
+          <ion-card-content>
+            <h3>{{ salon.nome }}</h3>
+            <p class="salon-address">
+              <ion-icon name="location"></ion-icon>
+              {{ salon.indirizzo }}
+            </p>
+            <p class="salon-distance" *ngIf="salon.distance">
+              <ion-icon name="walk"></ion-icon>
+              {{ salon.distance }} km
+            </p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+    </div>
+
+    <!-- STEP 2: Seleziona Servizio -->
+    <div *ngIf="currentStep === 2" class="step-container fade-in">
+      <div class="step-header">
+        <ion-icon name="cut" class="step-icon"></ion-icon>
+        <h2>Cosa desideri fare?</h2>
+        <p>Seleziona il servizio che ti interessa</p>
+      </div>
+
+      <div class="salon-selected-info" *ngIf="selectedSalon">
+        <ion-icon name="checkmark-circle" color="success"></ion-icon>
+        <span>{{ selectedSalon.nome }}</span>
+      </div>
+
+      <div class="services-grid">
+        <ion-card *ngFor="let service of services" (click)="selectService(service)" 
+                  class="service-card" [class.selected]="selectedService === service">
+          <div class="service-icon-wrapper">
+            <ion-icon [name]="getServiceIcon(service)" class="service-icon"></ion-icon>
+          </div>
+          <ion-card-content>
+            <h3>{{ service }}</h3>
+            <ion-icon *ngIf="selectedService === service" name="checkmark-circle" color="success" class="selected-icon"></ion-icon>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- STEP 3: Seleziona Operatore -->
+    <div *ngIf="currentStep === 3" class="step-container fade-in">
+      <div class="step-header">
+        <ion-icon name="person" class="step-icon"></ion-icon>
+        <h2>Scegli il tuo stylist</h2>
+        <p>Seleziona l'operatore che preferisci</p>
+      </div>
+
+      <div class="selection-recap">
+        <div class="recap-item">
+          <ion-icon name="storefront" color="primary"></ion-icon>
+          <span>{{ selectedSalon?.nome }}</span>
+        </div>
+        <div class="recap-item">
+          <ion-icon name="cut" color="primary"></ion-icon>
+          <span>{{ selectedService }}</span>
+        </div>
+      </div>
+
+      <div class="operators-grid" *ngIf="!loading && operators.length > 0">
+        <ion-card *ngFor="let operator of operators" (click)="selectOperator(operator)" class="operator-card">
+          <div class="operator-image">
+            <img [src]="operator.foto || 'assets/img/operator-placeholder.jpg'" alt="{{ operator.nome }} {{ operator.cognome }}">
+          </div>
+          <ion-card-content>
+            <h3>{{ operator.nome }} {{ operator.cognome }}</h3>
+            <p class="operator-specialty" *ngIf="operator.specializzazione">
+              <ion-icon name="star"></ion-icon>
+              {{ operator.specializzazione }}
+            </p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <div *ngIf="operators.length === 0 && !loading" class="empty-state">
+        <ion-icon name="sad"></ion-icon>
+        <p>Nessun operatore disponibile per questo salone</p>
+      </div>
+
+      <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+    </div>
+
+    <!-- STEP 4: Seleziona Data e Ora -->
+    <div *ngIf="currentStep === 4" class="step-container fade-in">
+      <div class="step-header">
+        <ion-icon name="calendar" class="step-icon"></ion-icon>
+        <h2>Quando vuoi venire?</h2>
+        <p>Seleziona data e orario</p>
+      </div>
+
+      <div class="selection-recap">
+        <div class="recap-item">
+          <ion-icon name="storefront" color="primary"></ion-icon>
+          <span>{{ selectedSalon?.nome }}</span>
+        </div>
+        <div class="recap-item">
+          <ion-icon name="cut" color="primary"></ion-icon>
+          <span>{{ selectedService }}</span>
+        </div>
+        <div class="recap-item">
+          <ion-icon name="person" color="primary"></ion-icon>
+          <span>{{ selectedOperator?.nome }} {{ selectedOperator?.cognome }}</span>
+        </div>
+      </div>
+
+      <div class="datetime-container">
+        <h3>Seleziona la data</h3>
+        <ion-datetime 
+          presentation="date" 
+          [(ngModel)]="selectedDate" 
+          [min]="minDate"
+          (ionChange)="selectDate($any($event).detail.value)"
+          locale="it-IT">
+        </ion-datetime>
+
+        <h3 *ngIf="selectedDate">Seleziona l'orario</h3>
+        <div class="slots-grid" *ngIf="selectedDate && availableSlots.length > 0">
+          <ion-chip *ngFor="let slot of availableSlots" 
+                    (click)="selectSlot(slot)"
+                    [color]="selectedSlot === slot ? 'primary' : 'medium'"
+                    [class.selected]="selectedSlot === slot">
+            <ion-icon name="time"></ion-icon>
+            <ion-label>{{ slot }}</ion-label>
+          </ion-chip>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 5: Conferma -->
+    <div *ngIf="currentStep === 5" class="step-container fade-in">
+      <div class="step-header">
+        <ion-icon name="checkmark-circle" class="step-icon" color="success"></ion-icon>
+        <h2>Riepilogo prenotazione</h2>
+        <p>Controlla i dettagli prima di confermare</p>
+      </div>
+
+      <ion-card class="summary-card">
+        <ion-card-header>
+          <ion-card-title>{{ selectedSalon?.nome }}</ion-card-title>
+          <ion-card-subtitle>
+            <ion-icon name="location"></ion-icon>
+            {{ selectedSalon?.indirizzo }}
+          </ion-card-subtitle>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="summary-row">
+            <div class="summary-label">
+              <ion-icon name="cut" color="primary"></ion-icon>
+              <span>Servizio</span>
+            </div>
+            <div class="summary-value">{{ selectedService }}</div>
+          </div>
+
+          <div class="summary-row">
+            <div class="summary-label">
+              <ion-icon name="person" color="primary"></ion-icon>
+              <span>Operatore</span>
+            </div>
+            <div class="summary-value">{{ selectedOperator?.nome }} {{ selectedOperator?.cognome }}</div>
+          </div>
+
+          <div class="summary-row">
+            <div class="summary-label">
+              <ion-icon name="calendar" color="primary"></ion-icon>
+              <span>Data</span>
+            </div>
+            <div class="summary-value">{{ selectedDate | date:'dd/MM/yyyy' }}</div>
+          </div>
+
+          <div class="summary-row">
+            <div class="summary-label">
+              <ion-icon name="time" color="primary"></ion-icon>
+              <span>Orario</span>
+            </div>
+            <div class="summary-value">{{ selectedSlot }}</div>
+          </div>
+
+          <ion-item lines="none" class="notes-item">
+            <ion-label position="stacked">Note aggiuntive (opzionale)</ion-label>
+            <ion-textarea [(ngModel)]="notes" placeholder="Aggiungi eventuali note..."></ion-textarea>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-button expand="block" [disabled]="!canProceed()" (click)="currentStep < 5 ? nextStep() : confirmBooking()" class="action-button">
+      <span *ngIf="currentStep < 5">Continua</span>
+      <span *ngIf="currentStep === 5">Conferma Prenotazione</span>
+      <ion-icon slot="end" [name]="currentStep < 5 ? 'arrow-forward' : 'checkmark'"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-footer>

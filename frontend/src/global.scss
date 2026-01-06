@@ -32,5 +32,14 @@ ion-header {
   z-index: 10 !important;
 }
 
+// Forza il popover notifiche sopra tutto
+.notification-popover-overlay {
+  z-index: 999999 !important;
+}
+
+.notification-popover {
+  z-index: 1000000 !important;
+}
+
 // Rimuove la linea separatoria perché ora usiamo il footer nativo
 

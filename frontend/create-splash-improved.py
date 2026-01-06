@@ -178,6 +178,12 @@ def main():
         'drawable-xhdpi': (720, 1280),
         'drawable-xxhdpi': (1080, 1920),
         'drawable-xxxhdpi': (1440, 2560),
+        # Portrait
+        'drawable-port-mdpi': (320, 480),
+        'drawable-port-hdpi': (480, 800),
+        'drawable-port-xhdpi': (720, 1280),
+        'drawable-port-xxhdpi': (1080, 1920),
+        'drawable-port-xxxhdpi': (1440, 2560),
         # Landscape
         'drawable-land-mdpi': (480, 320),
         'drawable-land-hdpi': (800, 480),

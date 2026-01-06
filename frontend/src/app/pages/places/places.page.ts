@@ -34,6 +34,12 @@ export class PlacesPage implements OnInit, OnDestroy {
   async ngOnInit() {
     await this.getCurrentLocation();
     await this.loadPlaces();
+    
+    // Ascolta l'evento bookPlace dalla mappa
+    window.addEventListener('bookPlace', ((event: CustomEvent) => {
+      const salonId = event.detail;
+      this.navigateToBooking(salonId);
+    }) as EventListener);
   }
 
   ngOnDestroy() {
@@ -42,13 +48,25 @@ export class PlacesPage implements OnInit, OnDestroy {
       this.map.remove();
       this.map = null;
     }
+    // Rimuovi listener
+    window.removeEventListener('bookPlace', this.navigateToBooking);
   }
 
   async ionViewDidEnter() {
     if (this.viewMode === 'map' && !this.map) {
-      setTimeout(() => {
-        this.initMap();
-      }, 300);
+      // Attendi che la posizione sia disponibile prima di inizializzare la mappa
+      if (this.currentPosition) {
+        setTimeout(() => {
+          this.initMap();
+        }, 300);
+      } else {
+        // Se non c'è ancora la posizione, aspetta e riprova
+        setTimeout(() => {
+          if (this.currentPosition) {
+            this.initMap();
+          }
+        }, 1000);
+      }
     }
   }
 
@@ -63,7 +81,11 @@ export class PlacesPage implements OnInit, OnDestroy {
         };
         this.userLocation = this.currentPosition;
         console.log('✅ Posizione ottenuta:', this.currentPosition);
-        return; // Uscita anticipata se la posizione è valida
+        // Inizializza la mappa se siamo in modalità map
+        if (this.viewMode === 'map' && !this.map) {
+          setTimeout(() => this.initMap(), 500);
+        }
+        return;
       }
       
       // Se arriviamo qui, la geolocalizzazione ha fallito
@@ -80,6 +102,10 @@ export class PlacesPage implements OnInit, OnDestroy {
           };
           this.userLocation = this.currentPosition;
           console.log('✅ Posizione ottenuta al secondo tentativo:', this.currentPosition);
+          // Inizializza la mappa
+          if (this.viewMode === 'map' && !this.map) {
+            setTimeout(() => this.initMap(), 500);
+          }
           return;
         }
       }
@@ -92,6 +118,10 @@ export class PlacesPage implements OnInit, OnDestroy {
         lng: 9.1900
       };
       this.userLocation = this.currentPosition;
+      // Inizializza comunque la mappa con posizione default
+      if (this.viewMode === 'map' && !this.map) {
+        setTimeout(() => this.initMap(), 500);
+      }
       
     } catch (error) {
       console.error('❌ Errore geolocalizzazione:', error);
@@ -102,6 +132,10 @@ export class PlacesPage implements OnInit, OnDestroy {
         lng: 9.1900
       };
       this.userLocation = this.currentPosition;
+      // Inizializza comunque la mappa
+      if (this.viewMode === 'map' && !this.map) {
+        setTimeout(() => this.initMap(), 500);
+      }
     }
   }
 
@@ -198,8 +232,8 @@ export class PlacesPage implements OnInit, OnDestroy {
         bearing: 0
       });
 
-      // Aggiungi controlli di navigazione
-      this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
+      // Controlli nascosti per interfaccia pulita
+      // this.map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
       // Marker posizione corrente
       if (this.currentPosition) {
@@ -296,6 +330,22 @@ export class PlacesPage implements OnInit, OnDestroy {
           '<p style="margin: 4px 0; font-size: 14px; color: #48bb78;"><strong>🟢 Aperto</strong></p>' : 
           '<p style="margin: 4px 0; font-size: 14px; color: #f56565;"><strong>🔴 Chiuso</strong></p>'
         }
+        <button 
+          onclick="window.dispatchEvent(new CustomEvent('bookPlace', { detail: '${place._id}' }))"
+          style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+            font-size: 14px;
+          ">
+          📅 Prenota Ora
+        </button>
       </div>
     `;
   }
@@ -391,5 +441,11 @@ export class PlacesPage implements OnInit, OnDestroy {
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+
+  navigateToBooking(salonId: string) {
+    this.router.navigate(['/booking'], {
+      state: { preselectedSalonId: salonId }
+    });
   }
 }
